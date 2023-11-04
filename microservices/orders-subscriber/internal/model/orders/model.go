@@ -1,24 +1,20 @@
 package orders
 
-import (
-	"time"
-)
-
 type OrderModel struct {
-	OrderUid          string             `json:"order_uid"`
-	TrackNumber       string             `json:"track_number"`
-	Entry             string             `json:"entry"`
-	Delivery          OrderDeliveryModel `json:"delivery"`
-	Payment           OrderPaymentModel  `json:"payment"`
-	Items             []OrderItemModel   `json:"items"`
-	Locale            string             `json:"locale"`
-	InternalSignature string             `json:"internal_signature"`
-	CustomerId        string             `json:"customer_id"`
-	DeliveryService   string             `json:"delivery_service"`
-	Shardkey          string             `json:"shardkey"`
-	SmId              int                `json:"sm_id"`
-	DateCreated       time.Time          `json:"date_created"`
-	OofShard          string             `json:"oof_shard"`
+	OrderUid          string              `json:"order_uid"`
+	TrackNumber       string              `json:"track_number"`
+	Entry             string              `json:"entry"`
+	Delivery          *OrderDeliveryModel `json:"delivery"`
+	Payment           *OrderPaymentModel  `json:"payment"`
+	Items             *[]OrderItemModel   `json:"items"`
+	Locale            string              `json:"locale"`
+	InternalSignature string              `json:"internal_signature"`
+	CustomerId        string              `json:"customer_id"`
+	DeliveryService   string              `json:"delivery_service"`
+	Shardkey          string              `json:"shardkey"`
+	SmId              int                 `json:"sm_id"`
+	DateCreated       string              `json:"date_created"`
+	OofShard          string              `json:"oof_shard"`
 }
 
 type OrderDeliveryModel struct {
@@ -62,16 +58,16 @@ func ConstructorOrderModel(
 	OrderUid string,
 	TrackNumber string,
 	Entry string,
-	Delivery OrderDeliveryModel,
-	Payment OrderPaymentModel,
-	Items []OrderItemModel,
+	Delivery *OrderDeliveryModel,
+	Payment *OrderPaymentModel,
+	Items *[]OrderItemModel,
 	Locale string,
 	InternalSignature string,
 	CustomerId string,
 	DeliveryService string,
 	Shardkey string,
 	SmId int,
-	DateCreated time.Time,
+	DateCreated string,
 	OofShard string,
 ) *OrderModel {
 	result := &OrderModel{
