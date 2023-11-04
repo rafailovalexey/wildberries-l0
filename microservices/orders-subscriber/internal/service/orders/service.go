@@ -11,5 +11,5 @@ type Service struct{}
 var _ service.OrdersServiceInterface = &Service{}
 
 func (s *Service) SubscribeOrders(message *stan.Msg) {
-	fmt.Println(message)
+	fmt.Println(string(message.Data))
 }
