@@ -1,4 +1,5 @@
-FROM golang:1.20-bookworm
+# Зафиксировать версию перед релизом
+FROM golang:latest
 
 WORKDIR /usr/local/application
 
