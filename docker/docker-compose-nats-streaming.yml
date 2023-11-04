@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  nats-streaming:
+    # Зафиксировать версию при релизе
+    image: "nats-streaming:latest"
+    container_name: "nats-streaming"
+    hostname: "nats-streaming"
+    restart: "always"
+    ports:
+      - "4222:4222"
+    networks:
+      - "network"
+
+networks:
+  network:
+    driver: "bridge"
