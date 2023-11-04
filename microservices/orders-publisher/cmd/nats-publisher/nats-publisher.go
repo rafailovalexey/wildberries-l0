@@ -8,11 +8,11 @@ import (
 )
 
 func Start() {
-	url := os.Getenv("NATS_URL")
-
-	if url == "" {
-		log.Fatalf("укажите nats-publisher url")
-	}
+	//url := os.Getenv("NATS_URL")
+	//
+	//if url == "" {
+	//	log.Fatalf("укажите nats-publisher url")
+	//}
 
 	cluster := os.Getenv("NATS_CLUSTER_ID")
 
@@ -20,7 +20,10 @@ func Start() {
 		log.Fatalf("укажите идентификатор кластера")
 	}
 
-	sc, err := stan.Connect(cluster, "publisher-1", stan.NatsURL(url))
+	//fmt.Println(url, cluster)
+
+	//sc, err := stan.Connect(cluster, "publisher-1", stan.NatsURL(url))
+	sc, err := stan.Connect(cluster, "publisher-1")
 	if err != nil {
 		log.Fatal(err)
 	}
