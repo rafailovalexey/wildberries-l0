@@ -1,7 +1,7 @@
 package service
 
 import (
-	model "github.com/emptyhopes/level0/internal/model/orders"
+	model "github.com/emptyhopes/orders/internal/model/orders"
 )
 
 type OrdersServiceInterface interface {

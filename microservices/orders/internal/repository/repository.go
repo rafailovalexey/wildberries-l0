@@ -1,8 +1,8 @@
 package repository
 
 import (
-	model "github.com/emptyhopes/level0/internal/model/orders"
-	"github.com/emptyhopes/level0/storage"
+	model "github.com/emptyhopes/orders/internal/model/orders"
+	"github.com/emptyhopes/orders/storage"
 )
 
 var Cache = storage.ConstructorCache()

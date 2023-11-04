@@ -1,7 +1,7 @@
 package main
 
 import (
-	HTTPServer "github.com/emptyhopes/level0/cmd/http-server"
+	HTTPServer "github.com/emptyhopes/orders/cmd/http-server"
 )
 
 func main() {

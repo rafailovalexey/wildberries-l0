@@ -1,3 +1,3 @@
-module github.com/emptyhopes/level0
+module github.com/emptyhopes/orders
 
 go 1.19

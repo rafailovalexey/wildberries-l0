@@ -15,6 +15,18 @@ services:
       context: "../microservices/orders"
       dockerfile: "application.dockerfile"
 
+  orders-publisher:
+    container_name: "orders-publisher"
+    hostname: "orders-publisher"
+    restart: "always"
+    networks:
+      - "network"
+    env_file:
+      - "../microservices/orders-publisher/.env"
+    build:
+      context: "../microservices/orders-publisher"
+      dockerfile: "application.dockerfile"
+
 networks:
   network:
     driver: "bridge"

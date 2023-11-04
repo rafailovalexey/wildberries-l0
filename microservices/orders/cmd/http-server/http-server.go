@@ -2,9 +2,9 @@ package http_server
 
 import (
 	"fmt"
-	"github.com/emptyhopes/level0/cmd/http-server/interceptor"
-	"github.com/emptyhopes/level0/cmd/http-server/middleware"
-	"github.com/emptyhopes/level0/internal/api/orders"
+	"github.com/emptyhopes/orders/cmd/http-server/interceptor"
+	"github.com/emptyhopes/orders/cmd/http-server/middleware"
+	"github.com/emptyhopes/orders/internal/api/orders"
 	"log"
 	"net/http"
 	"os"

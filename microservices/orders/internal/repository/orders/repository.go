@@ -2,8 +2,8 @@ package orders
 
 import (
 	"fmt"
-	model "github.com/emptyhopes/level0/internal/model/orders"
-	"github.com/emptyhopes/level0/internal/repository"
+	model "github.com/emptyhopes/orders/internal/model/orders"
+	"github.com/emptyhopes/orders/internal/repository"
 	"time"
 )
 

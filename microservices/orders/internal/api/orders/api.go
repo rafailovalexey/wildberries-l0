@@ -2,8 +2,8 @@ package orders
 
 import (
 	"fmt"
-	"github.com/emptyhopes/level0/internal/api"
-	service "github.com/emptyhopes/level0/internal/service/orders"
+	"github.com/emptyhopes/orders/internal/api"
+	service "github.com/emptyhopes/orders/internal/service/orders"
 	"net/http"
 	"strings"
 )

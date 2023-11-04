@@ -1,9 +1,9 @@
 package orders
 
 import (
-	model "github.com/emptyhopes/level0/internal/model/orders"
-	repository "github.com/emptyhopes/level0/internal/repository/orders"
-	"github.com/emptyhopes/level0/internal/service"
+	model "github.com/emptyhopes/orders/internal/model/orders"
+	repository "github.com/emptyhopes/orders/internal/repository/orders"
+	"github.com/emptyhopes/orders/internal/service"
 )
 
 type Service struct{}
