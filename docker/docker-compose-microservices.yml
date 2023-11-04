@@ -15,6 +15,18 @@ services:
       context: "../microservices/orders"
       dockerfile: "application.dockerfile"
 
+  orders-subscriber:
+    container_name: "orders-subscriber"
+    hostname: "orders-subscriber"
+    restart: "always"
+    networks:
+      - "network"
+    env_file:
+      - "../microservices/orders-subscriber/.env"
+    build:
+      context: "../microservices/orders-subscriber"
+      dockerfile: "application.dockerfile"
+
   orders-publisher:
     container_name: "orders-publisher"
     hostname: "orders-publisher"

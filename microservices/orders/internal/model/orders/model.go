@@ -1,6 +1,8 @@
 package orders
 
-import "time"
+import (
+	"time"
+)
 
 type OrderModel struct {
 	OrderUid          string             `json:"order_uid"`
