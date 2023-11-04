@@ -1,0 +1,8 @@
+# Binary
+bin
+
+# JetBrains
+.idea
+
+# Environment
+.env

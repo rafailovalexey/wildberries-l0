@@ -37,8 +37,7 @@ func (a *Api) GetOrderById(response http.ResponseWriter, request *http.Request) 
 }
 
 /*
-Здесь я использовал парсинг URL, для того, чтобы добиться REST поведения, не очень нравится такой код,
-наверное это стоит вынести в какой-то отдельный пакет по работе с этим, либо же использовать уже готовые пакеты
+Здесь я использовал парсинг URL, для того, чтобы добиться REST поведения
 GetAllOrders - /v1/orders
 GetOrderById - /v1/orders/:id
 */
@@ -47,9 +46,10 @@ func (a *Api) OrdersHandler(response http.ResponseWriter, request *http.Request)
 	case http.MethodGet:
 		if strings.HasPrefix(request.URL.Path, "/v1/orders/") {
 			a.GetOrderById(response, request)
-		} else {
-			http.Error(response, "несуществующий URL", http.StatusNotFound)
+			return
 		}
+
+		http.Error(response, "несуществующий URL", http.StatusNotFound)
 	default:
 		http.Error(response, "несуществующий http метод", http.StatusMethodNotAllowed)
 	}
