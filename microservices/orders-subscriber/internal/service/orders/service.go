@@ -21,5 +21,5 @@ func (s *Service) SubscribeOrders(message *stan.Msg) {
 		fmt.Printf("error %v\n", err)
 	}
 
-	fmt.Printf("%v\n", data)
+	fmt.Printf("%#v\n", data)
 }
