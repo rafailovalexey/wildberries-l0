@@ -6,13 +6,15 @@ import (
 )
 
 type OrdersConverterInterface interface {
-	OrderModelToOrderModelRepository(model model.OrderModel) repositoryModel.OrderModelRepository
-	OrderPaymentModelToOrderPaymentModelRepository(model model.OrderPaymentModel) repositoryModel.OrderPaymentModelRepository
-	OrderDeliveryModelToOrderDeliveryModelRepository(model model.OrderDeliveryModel) repositoryModel.OrderDeliveryModelRepository
-	OrderItemsModelToOrderItemsModelRepository(models []model.OrderItemModel) []repositoryModel.OrderItemModelRepository
+	OrderModelToOrderModelRepository(*model.OrderModel) *repositoryModel.OrderModelRepository
+	OrderPaymentModelToOrderPaymentModelRepository(*model.OrderPaymentModel) *repositoryModel.OrderPaymentModelRepository
+	OrderDeliveryModelToOrderDeliveryModelRepository(*model.OrderDeliveryModel) *repositoryModel.OrderDeliveryModelRepository
+	OrderItemModelToOrderItemModelRepository(*model.OrderItemModel) *repositoryModel.OrderItemModelRepository
+	OrderItemsModelToOrderItemsModelRepository(*[]model.OrderItemModel) *[]repositoryModel.OrderItemModelRepository
 
-	OrderModelRepositoryToOrderModel(models repositoryModel.OrderModelRepository) model.OrderModel
-	OrderPaymentModelRepositoryToOrderPaymentModel(models repositoryModel.OrderPaymentModelRepository) model.OrderPaymentModel
-	OrderDeliveryModelRepositoryToOrderDeliveryModel(models repositoryModel.OrderDeliveryModelRepository) model.OrderDeliveryModel
-	OrderItemsModelRepositoryToOrderItemsModel(models []repositoryModel.OrderItemModelRepository) []model.OrderItemModel
+	OrderModelRepositoryToOrderModel(*repositoryModel.OrderModelRepository) *model.OrderModel
+	OrderPaymentModelRepositoryToOrderPaymentModel(*repositoryModel.OrderPaymentModelRepository) *model.OrderPaymentModel
+	OrderDeliveryModelRepositoryToOrderDeliveryModel(*repositoryModel.OrderDeliveryModelRepository) *model.OrderDeliveryModel
+	OrderItemModelRepositoryToOrderItemModel(*repositoryModel.OrderItemModelRepository) *model.OrderItemModel
+	OrderItemsModelRepositoryToOrderItemsModel(*[]repositoryModel.OrderItemModelRepository) *[]model.OrderItemModel
 }
