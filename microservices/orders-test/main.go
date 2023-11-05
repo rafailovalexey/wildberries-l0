@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	model "github.com/emptyhopes/orders-test/internal/model/orders"
+	model "github.com/emptyhopes/orders-test/internal/dto/orders"
 	"github.com/emptyhopes/orders-test/storage"
 	"github.com/emptyhopes/orders-test/utils"
 	"github.com/jackc/pgx/v4/pgxpool"

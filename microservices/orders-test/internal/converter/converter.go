@@ -1,20 +1,20 @@
 package converter
 
 import (
+	dto "github.com/emptyhopes/orders-test/internal/dto/orders"
 	model "github.com/emptyhopes/orders-test/internal/model/orders"
-	repositoryModel "github.com/emptyhopes/orders-test/internal/repository/model/orders"
 )
 
 type OrdersConverterInterface interface {
-	OrderModelToOrderModelRepository(*model.OrderModel) *repositoryModel.OrderModelRepository
-	OrderPaymentModelToOrderPaymentModelRepository(*model.OrderPaymentModel) *repositoryModel.OrderPaymentModelRepository
-	OrderDeliveryModelToOrderDeliveryModelRepository(*model.OrderDeliveryModel) *repositoryModel.OrderDeliveryModelRepository
-	OrderItemModelToOrderItemModelRepository(*model.OrderItemModel) *repositoryModel.OrderItemModelRepository
-	OrderItemsModelToOrderItemsModelRepository(*[]model.OrderItemModel) *[]repositoryModel.OrderItemModelRepository
+	OrderDtoToOrderModel(*dto.OrderDto) *model.OrderModel
+	OrderPaymentDtoToOrderPaymentModel(*dto.OrderPaymentDto) *model.OrderPaymentModel
+	OrderDeliveryDtoToOrderDeliveryModel(*dto.OrderDeliveryDto) *model.OrderDeliveryModel
+	OrderItemDtoToOrderItemModel(*dto.OrderItemDto) *model.OrderItemModel
+	OrderItemsDtoToOrderItemsModel(*[]dto.OrderItemDto) *[]model.OrderItemModel
 
-	OrderModelRepositoryToOrderModel(*repositoryModel.OrderModelRepository) *model.OrderModel
-	OrderPaymentModelRepositoryToOrderPaymentModel(*repositoryModel.OrderPaymentModelRepository) *model.OrderPaymentModel
-	OrderDeliveryModelRepositoryToOrderDeliveryModel(*repositoryModel.OrderDeliveryModelRepository) *model.OrderDeliveryModel
-	OrderItemModelRepositoryToOrderItemModel(*repositoryModel.OrderItemModelRepository) *model.OrderItemModel
-	OrderItemsModelRepositoryToOrderItemsModel(*[]repositoryModel.OrderItemModelRepository) *[]model.OrderItemModel
+	OrderModelToOrderDto(*model.OrderModel) *dto.OrderDto
+	OrderPaymentModelToOrderPaymentDto(*model.OrderPaymentModel) *dto.OrderPaymentDto
+	OrderDeliveryModelToOrderDeliveryDto(*model.OrderDeliveryModel) *dto.OrderDeliveryDto
+	OrderItemModelToOrderItemDto(*model.OrderItemModel) *dto.OrderItemDto
+	OrderItemsModelToOrderItemsDto(*[]model.OrderItemModel) *[]dto.OrderItemDto
 }
