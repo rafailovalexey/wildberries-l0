@@ -12,7 +12,6 @@ var _ converter.OrdersConverterInterface = &Converter{}
 
 func (c *Converter) OrderDtoToOrderModel(dto *dto.OrderDto) *model.OrderModel {
 	return &model.OrderModel{
-		OrderUid:          dto.OrderUid,
 		TrackNumber:       dto.TrackNumber,
 		Entry:             dto.Entry,
 		Delivery:          c.OrderDeliveryDtoToOrderDeliveryModel(dto.Delivery),
@@ -84,7 +83,6 @@ func (c *Converter) OrderItemsDtoToOrderItemsModel(dtos *[]dto.OrderItemDto) *[]
 
 func (c *Converter) OrderModelToOrderDto(model *model.OrderModel) *dto.OrderDto {
 	return &dto.OrderDto{
-		OrderUid:          model.OrderUid,
 		TrackNumber:       model.TrackNumber,
 		Entry:             model.Entry,
 		Delivery:          c.OrderDeliveryModelToOrderDeliveryDto(model.Delivery),

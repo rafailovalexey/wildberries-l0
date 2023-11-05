@@ -1,7 +1,6 @@
 package orders
 
 type OrderModel struct {
-	OrderUid          string              `json:"order_uid"`
 	TrackNumber       string              `json:"track_number"`
 	Entry             string              `json:"entry"`
 	Delivery          *OrderDeliveryModel `json:"delivery"`
@@ -71,7 +70,6 @@ func ConstructorOrderModel(
 	OofShard string,
 ) *OrderModel {
 	result := &OrderModel{
-		OrderUid:          OrderUid,
 		TrackNumber:       TrackNumber,
 		Entry:             Entry,
 		Delivery:          Delivery,

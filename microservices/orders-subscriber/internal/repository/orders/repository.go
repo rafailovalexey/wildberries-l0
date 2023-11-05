@@ -6,11 +6,15 @@ import (
 	"github.com/emptyhopes/orders-subscriber/internal/helpers"
 	model "github.com/emptyhopes/orders-subscriber/internal/model/orders"
 	"github.com/emptyhopes/orders-subscriber/internal/repository"
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/emptyhopes/orders-subscriber/storage"
+	"sync"
 	"time"
 )
 
-type Repository struct{}
+type Repository struct {
+	database storage.Database
+	rwmutex  sync.RWMutex
+}
 
 var _ repository.OrdersRepositoryInterface = &Repository{}
 
@@ -28,7 +32,13 @@ func (r *Repository) Cache(model *model.OrderModel) (bool, error) {
 	return true, nil
 }
 
-func (r *Repository) CreateOrder(pool *pgxpool.Pool, order *model.OrderModel, delivery *model.OrderDeliveryModel, payment *model.OrderPaymentModel, items *[]model.OrderItemModel) error {
+func (r *Repository) CreateOrder(order *model.OrderModel) error {
+	r.rwmutex.Lock()
+	defer r.rwmutex.Unlock()
+
+	pool := r.database.GetPool()
+	defer pool.Close()
+
 	transactions, err := helpers.ConstructorTransactions(context.Background(), pool)
 
 	if err != nil {
@@ -37,11 +47,11 @@ func (r *Repository) CreateOrder(pool *pgxpool.Pool, order *model.OrderModel, de
 
 	defer transactions.Rollback(context.Background())
 
-	if err := r.insertOrderPayment(transactions, payment); err != nil {
+	if err := r.insertOrderPayment(transactions, order.Payment); err != nil {
 		return err
 	}
 
-	if err := r.insertOrderDelivery(transactions, delivery); err != nil {
+	if err := r.insertOrderDelivery(transactions, order.Delivery); err != nil {
 		return err
 	}
 
@@ -49,7 +59,7 @@ func (r *Repository) CreateOrder(pool *pgxpool.Pool, order *model.OrderModel, de
 		return err
 	}
 
-	if err := r.insertOrderItems(transactions, items); err != nil {
+	if err := r.insertOrderItems(transactions, order.Items); err != nil {
 		return err
 	}
 
@@ -62,8 +72,8 @@ func (r *Repository) CreateOrder(pool *pgxpool.Pool, order *model.OrderModel, de
 
 func (r *Repository) insertOrderPayment(transactions *helpers.Transactions, payment *model.OrderPaymentModel) error {
 	query := `
-        INSERT INTO payment (id, transaction, request_id, currency, provider, amount, payment_dt, bank, delivery_cost, goods_total, custom_fee)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        INSERT INTO payment (transaction, request_id, currency, provider, amount, payment_dt, bank, delivery_cost, goods_total, custom_fee)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
     `
 
 	_ = transactions.QueryRow(
@@ -86,14 +96,13 @@ func (r *Repository) insertOrderPayment(transactions *helpers.Transactions, paym
 
 func (r *Repository) insertOrderDelivery(transactions *helpers.Transactions, delivery *model.OrderDeliveryModel) error {
 	query := `
-        INSERT INTO delivery (id, name, phone, zip, city, address, region, email)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        INSERT INTO delivery (name, phone, zip, city, address, region, email)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
     `
 
 	_ = transactions.QueryRow(
 		context.Background(),
 		query,
-		//delivery.Id,
 		delivery.Name,
 		delivery.Phone,
 		delivery.Zip,

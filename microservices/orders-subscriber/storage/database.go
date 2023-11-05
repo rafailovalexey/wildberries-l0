@@ -2,8 +2,10 @@ package storage
 
 import (
 	"context"
+	"fmt"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"log"
+	"os"
 )
 
 type DatabaseInterface interface {
@@ -22,9 +24,44 @@ type Database struct {
 
 var _ DatabaseInterface = &Database{}
 
-// Initialize TODO поменять на environment
 func (d *Database) Initialize() {
-	d.credentials = "user=postgres password=postgres dbname=postgres host=localhost port=5432 sslmode=disable"
+	username := os.Getenv("POSTGRESQL_USERNAME")
+
+	if username == "" {
+		log.Fatalf("укажите пользователя базы данных")
+	}
+
+	password := os.Getenv("POSTGRESQL_PASSWORD")
+
+	if password == "" {
+		log.Fatalf("укажите пользователя базы данных")
+	}
+
+	database := os.Getenv("POSTGRESQL_DATABASE")
+
+	if database == "" {
+		log.Fatalf("укажите название базы данных")
+	}
+
+	hostname := os.Getenv("POSTGRESQL_HOSTNAME")
+
+	if hostname == "" {
+		log.Fatalf("укажите имя хоста базы данных")
+	}
+
+	port := os.Getenv("POSTGRESQL_PORT")
+
+	if port == "" {
+		log.Fatalf("укажите порт базы данных")
+	}
+
+	sslmode := os.Getenv("POSTGRESQL_SSLMODE")
+
+	if sslmode == "" {
+		log.Fatalf("укажите ssl mode базы данных")
+	}
+
+	d.credentials = fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s sslmode=%s", username, password, database, hostname, port, sslmode)
 }
 
 func (d *Database) GetPool() *pgxpool.Pool {
@@ -47,11 +84,11 @@ func (d *Database) CreateTables(pool *pgxpool.Pool) {
 func (d *Database) CreateOrderTable(pool *pgxpool.Pool) {
 	query := `
     CREATE TABLE IF NOT EXISTS orders (
-        order_uid UUID PRIMARY KEY,
+        order_uid UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
         track_number VARCHAR(255),
         entry VARCHAR(255),
-        delivery_id UUID REFERENCES delivery(id),
-        payment_id UUID REFERENCES payment(id),
+        delivery_uid UUID REFERENCES delivery(delivery_uid),
+        payment_uid UUID REFERENCES payment(payment_uid),
         locale VARCHAR(255),
         internal_signature VARCHAR(255),
         customer_id VARCHAR(255),
@@ -73,7 +110,7 @@ func (d *Database) CreateOrderTable(pool *pgxpool.Pool) {
 func (d *Database) CreateOrderDeliveryTable(pool *pgxpool.Pool) {
 	query := `
     CREATE TABLE IF NOT EXISTS delivery (
-        id UUID PRIMARY KEY,
+        delivery_uid UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
         name VARCHAR(255),
         phone VARCHAR(255),
         zip VARCHAR(255),
@@ -94,7 +131,7 @@ func (d *Database) CreateOrderDeliveryTable(pool *pgxpool.Pool) {
 func (d *Database) CreateOrderPaymentTable(pool *pgxpool.Pool) {
 	query := `
     CREATE TABLE IF NOT EXISTS payment (
-        id UUID PRIMARY KEY,
+        payment_uid UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
         transaction UUID,
         request_id VARCHAR(255),
         currency VARCHAR(255),
@@ -129,7 +166,7 @@ func (d *Database) CreateOrderItems(pool *pgxpool.Pool) {
 		nm_id INT,
 		brand VARCHAR(255),
 		status INT,
-		order_id UUID REFERENCES orders(order_uid)
+		order_uid UUID REFERENCES orders(order_uid)
 	);
 	`
 
