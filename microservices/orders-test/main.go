@@ -5,7 +5,6 @@ import (
 	model "github.com/emptyhopes/orders-test/internal/model/orders"
 	"github.com/emptyhopes/orders-test/storage"
 	"github.com/emptyhopes/orders-test/utils"
-	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"log"
 )
@@ -79,13 +78,15 @@ func InsertOrderPayment(transactions *utils.Transactions, payment *model.OrderPa
 	return nil
 }
 
-func InsertOrderDelivery(tx pgx.Tx, delivery *model.OrderDeliveryModel) error {
+func InsertOrderDelivery(transactions *utils.Transactions, delivery *model.OrderDeliveryModel) error {
 	query := `
         INSERT INTO delivery (id, name, phone, zip, city, address, region, email)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
     `
 
-	_, err := tx.Exec(context.Background(), query,
+	_ = transactions.QueryRow(
+		context.Background(),
+		query,
 		delivery.Id,
 		delivery.Name,
 		delivery.Phone,
@@ -96,16 +97,18 @@ func InsertOrderDelivery(tx pgx.Tx, delivery *model.OrderDeliveryModel) error {
 		delivery.Email,
 	)
 
-	return err
+	return nil
 }
 
-func InsertOrder(tx pgx.Tx, order *model.OrderModel) error {
+func InsertOrder(transactions *utils.Transactions, order *model.OrderModel) error {
 	query := `
         INSERT INTO orders (order_uid, track_number, entry, delivery_id, payment_id, locale, internal_signature, customer_id, delivery_service, shardkey, sm_id, date_created, oof_shard)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
     `
 
-	_, err := tx.Exec(context.Background(), query,
+	_ = transactions.QueryRow(
+		context.Background(),
+		query,
 		order.OrderUid,
 		order.TrackNumber,
 		order.Entry,
@@ -121,17 +124,17 @@ func InsertOrder(tx pgx.Tx, order *model.OrderModel) error {
 		order.OofShard,
 	)
 
-	return err
+	return nil
 }
 
-func InsertOrderItems(tx pgx.Tx, items *[]model.OrderItemModel) error {
+func InsertOrderItems(transactions *utils.Transactions, items *[]model.OrderItemModel) error {
 	query := `
         INSERT INTO order_items (chrt_id, track_number, price, rid, name, sale, size, total_price, nm_id, brand, status, order_id)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
     `
 
 	for _, item := range *items {
-		_, err := tx.Exec(
+		_ = transactions.QueryRow(
 			context.Background(),
 			query,
 			item.ChrtId,
@@ -147,10 +150,6 @@ func InsertOrderItems(tx pgx.Tx, items *[]model.OrderItemModel) error {
 			item.Status,
 			item.OrderId,
 		)
-
-		if err != nil {
-			return err
-		}
 	}
 
 	return nil
