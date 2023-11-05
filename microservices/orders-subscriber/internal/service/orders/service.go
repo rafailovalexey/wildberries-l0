@@ -3,9 +3,11 @@ package orders
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/emptyhopes/orders-subscriber/internal/model/orders"
+	converter "github.com/emptyhopes/orders-subscriber/internal/converter/orders"
+	dto "github.com/emptyhopes/orders-subscriber/internal/dto/orders"
 	"github.com/emptyhopes/orders-subscriber/internal/service"
 	"github.com/nats-io/stan.go"
+	"log"
 )
 
 type Service struct{}
@@ -13,13 +15,17 @@ type Service struct{}
 var _ service.OrdersServiceInterface = &Service{}
 
 func (s *Service) SubscribeOrders(message *stan.Msg) {
-	var data orders.OrderModel
+	var data dto.OrderDto
 
 	err := json.Unmarshal(message.Data, &data)
 
 	if err != nil {
-		fmt.Printf("error %v\n", err)
+		log.Fatalf("error %v\n", err)
 	}
 
-	fmt.Printf("%#v\n", data)
+	converterOrders := &converter.Converter{}
+
+	model := converterOrders.OrderDtoToOrderModel(&data)
+
+	fmt.Printf("%#v\n", model)
 }

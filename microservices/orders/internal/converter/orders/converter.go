@@ -1,9 +1,9 @@
 package orders
 
 import (
-	"github.com/emptyhopes/orders-test/internal/converter"
-	dto "github.com/emptyhopes/orders-test/internal/dto/orders"
-	model "github.com/emptyhopes/orders-test/internal/model/orders"
+	"github.com/emptyhopes/orders/internal/converter"
+	dto "github.com/emptyhopes/orders/internal/dto/orders"
+	model "github.com/emptyhopes/orders/internal/model/orders"
 )
 
 type Converter struct{}

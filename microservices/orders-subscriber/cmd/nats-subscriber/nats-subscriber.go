@@ -2,7 +2,7 @@ package nats_subscriber
 
 import (
 	"fmt"
-	"github.com/emptyhopes/orders-subscriber/internal/service/orders"
+	service "github.com/emptyhopes/orders-subscriber/internal/service/orders"
 	"github.com/nats-io/stan.go"
 	"log"
 	"os"
@@ -31,9 +31,9 @@ func Start() {
 
 	defer sc.Close()
 
-	service := &orders.Service{}
+	serviceOrders := &service.Service{}
 
-	Subscribe(sc, "orders", "orders", service.SubscribeOrders)
+	Subscribe(sc, "orders", "orders", serviceOrders.SubscribeOrders)
 }
 
 func Subscribe(sc stan.Conn, subject string, queue string, handler stan.MsgHandler) {

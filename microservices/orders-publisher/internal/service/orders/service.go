@@ -3,7 +3,7 @@ package orders
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/emptyhopes/orders-publisher/internal/model/orders"
+	dto "github.com/emptyhopes/orders-publisher/internal/dto/orders"
 	"github.com/emptyhopes/orders-publisher/internal/service"
 	"github.com/google/uuid"
 	"github.com/nats-io/stan.go"
@@ -16,7 +16,7 @@ type Service struct{}
 var _ service.OrdersServiceInterface = &Service{}
 
 func (s *Service) PublishOrders(sc stan.Conn, subject string) {
-	delivery := orders.ConstructorOrderDeliveryModel(
+	delivery := dto.ConstructorOrderDeliveryDto(
 		"Test Testov",
 		"+9720000000",
 		"2639809",
@@ -25,7 +25,7 @@ func (s *Service) PublishOrders(sc stan.Conn, subject string) {
 		"Kraiot",
 		"test@gmail.com",
 	)
-	payment := orders.ConstructorOrderPaymentModel(
+	payment := dto.ConstructorOrderPaymentDto(
 		"b563feb7b2b84b6test",
 		"1",
 		"USD",
@@ -37,7 +37,7 @@ func (s *Service) PublishOrders(sc stan.Conn, subject string) {
 		317,
 		0,
 	)
-	item1 := orders.ConstructorOrderItemModel(
+	item1 := dto.ConstructorOrderItemDto(
 		9934930,
 		"WBILMTESTTRACK",
 		453,
@@ -50,12 +50,12 @@ func (s *Service) PublishOrders(sc stan.Conn, subject string) {
 		"Vivienne Sabo",
 		202,
 	)
-	items := &[]orders.OrderItemModel{
+	items := &[]dto.OrderItemDto{
 		*item1,
 	}
 
 	for {
-		order := orders.ConstructorOrderModel(
+		order := dto.ConstructorOrderDto(
 			uuid.New().String(),
 			"WBILMTESTTRACK",
 			"WBIL",

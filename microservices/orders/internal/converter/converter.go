@@ -1,8 +1,8 @@
 package converter
 
 import (
-	dto "github.com/emptyhopes/orders-test/internal/dto/orders"
-	model "github.com/emptyhopes/orders-test/internal/model/orders"
+	dto "github.com/emptyhopes/orders/internal/dto/orders"
+	model "github.com/emptyhopes/orders/internal/model/orders"
 )
 
 type OrdersConverterInterface interface {

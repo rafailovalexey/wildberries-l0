@@ -1,23 +1,23 @@
 package orders
 
-type OrderModel struct {
-	OrderUid          string              `json:"order_uid"`
-	TrackNumber       string              `json:"track_number"`
-	Entry             string              `json:"entry"`
-	Delivery          *OrderDeliveryModel `json:"delivery"`
-	Payment           *OrderPaymentModel  `json:"payment"`
-	Items             *[]OrderItemModel   `json:"items"`
-	Locale            string              `json:"locale"`
-	InternalSignature string              `json:"internal_signature"`
-	CustomerId        string              `json:"customer_id"`
-	DeliveryService   string              `json:"delivery_service"`
-	Shardkey          string              `json:"shardkey"`
-	SmId              int                 `json:"sm_id"`
-	DateCreated       string              `json:"date_created"`
-	OofShard          string              `json:"oof_shard"`
+type OrderDto struct {
+	OrderUid          string            `json:"order_uid"`
+	TrackNumber       string            `json:"track_number"`
+	Entry             string            `json:"entry"`
+	Delivery          *OrderDeliveryDto `json:"delivery"`
+	Payment           *OrderPaymentDto  `json:"payment"`
+	Items             *[]OrderItemDto   `json:"items"`
+	Locale            string            `json:"locale"`
+	InternalSignature string            `json:"internal_signature"`
+	CustomerId        string            `json:"customer_id"`
+	DeliveryService   string            `json:"delivery_service"`
+	Shardkey          string            `json:"shardkey"`
+	SmId              int               `json:"sm_id"`
+	DateCreated       string            `json:"date_created"`
+	OofShard          string            `json:"oof_shard"`
 }
 
-type OrderDeliveryModel struct {
+type OrderDeliveryDto struct {
 	Name    string `json:"name"`
 	Phone   string `json:"phone"`
 	Zip     string `json:"zip"`
@@ -27,7 +27,7 @@ type OrderDeliveryModel struct {
 	Email   string `json:"email"`
 }
 
-type OrderPaymentModel struct {
+type OrderPaymentDto struct {
 	Transaction  string `json:"transaction"`
 	RequestId    string `json:"request_id"`
 	Currency     string `json:"currency"`
@@ -40,7 +40,7 @@ type OrderPaymentModel struct {
 	CustomFee    int    `json:"custom_fee"`
 }
 
-type OrderItemModel struct {
+type OrderItemDto struct {
 	ChrtId      int    `json:"chrt_id"`
 	TrackNumber string `json:"track_number"`
 	Price       int    `json:"price"`
@@ -54,13 +54,13 @@ type OrderItemModel struct {
 	Status      int    `json:"status"`
 }
 
-func ConstructorOrderModel(
+func ConstructorOrderDto(
 	OrderUid string,
 	TrackNumber string,
 	Entry string,
-	Delivery *OrderDeliveryModel,
-	Payment *OrderPaymentModel,
-	Items *[]OrderItemModel,
+	Delivery *OrderDeliveryDto,
+	Payment *OrderPaymentDto,
+	Items *[]OrderItemDto,
 	Locale string,
 	InternalSignature string,
 	CustomerId string,
@@ -69,8 +69,8 @@ func ConstructorOrderModel(
 	SmId int,
 	DateCreated string,
 	OofShard string,
-) *OrderModel {
-	result := &OrderModel{
+) *OrderDto {
+	result := &OrderDto{
 		OrderUid:          OrderUid,
 		TrackNumber:       TrackNumber,
 		Entry:             Entry,
@@ -90,7 +90,7 @@ func ConstructorOrderModel(
 	return result
 }
 
-func ConstructorOrderDeliveryModel(
+func ConstructorOrderDeliveryDto(
 	Name string,
 	Phone string,
 	Zip string,
@@ -98,8 +98,8 @@ func ConstructorOrderDeliveryModel(
 	Address string,
 	Region string,
 	Email string,
-) *OrderDeliveryModel {
-	result := &OrderDeliveryModel{
+) *OrderDeliveryDto {
+	result := &OrderDeliveryDto{
 		Name:    Name,
 		Phone:   Phone,
 		Zip:     Zip,
@@ -112,7 +112,7 @@ func ConstructorOrderDeliveryModel(
 	return result
 }
 
-func ConstructorOrderPaymentModel(
+func ConstructorOrderPaymentDto(
 	Transaction string,
 	RequestId string,
 	Currency string,
@@ -123,8 +123,8 @@ func ConstructorOrderPaymentModel(
 	DeliveryCost int,
 	GoodsTotal int,
 	CustomFee int,
-) *OrderPaymentModel {
-	result := &OrderPaymentModel{
+) *OrderPaymentDto {
+	result := &OrderPaymentDto{
 		Transaction:  Transaction,
 		RequestId:    RequestId,
 		Currency:     Currency,
@@ -140,7 +140,7 @@ func ConstructorOrderPaymentModel(
 	return result
 }
 
-func ConstructorOrderItemModel(
+func ConstructorOrderItemDto(
 	ChrtId int,
 	TrackNumber string,
 	Price int,
@@ -152,8 +152,8 @@ func ConstructorOrderItemModel(
 	NmId int,
 	Brand string,
 	Status int,
-) *OrderItemModel {
-	result := &OrderItemModel{
+) *OrderItemDto {
+	result := &OrderItemDto{
 		ChrtId:      ChrtId,
 		TrackNumber: TrackNumber,
 		Price:       Price,
