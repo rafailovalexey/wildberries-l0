@@ -10,13 +10,13 @@ type Converter struct{}
 
 var _ converter.OrdersConverterInterface = &Converter{}
 
-func (c *Converter) OrderDtoToOrderModel(dto *dto.OrderDto) *model.OrderModel {
+func (c *Converter) MapOrderDtoToOrderModel(dto *dto.OrderDto, deliveryUid string, paymentUid string) *model.OrderModel {
 	return &model.OrderModel{
+		OrderUid:          dto.OrderUid,
 		TrackNumber:       dto.TrackNumber,
 		Entry:             dto.Entry,
-		Delivery:          c.OrderDeliveryDtoToOrderDeliveryModel(dto.Delivery),
-		Payment:           c.OrderPaymentDtoToOrderPaymentModel(dto.Payment),
-		Items:             c.OrderItemsDtoToOrderItemsModel(dto.Items),
+		DeliveryUid:       deliveryUid,
+		PaymentUid:        paymentUid,
 		Locale:            dto.Locale,
 		InternalSignature: dto.InternalSignature,
 		CustomerId:        dto.CustomerId,
@@ -28,7 +28,7 @@ func (c *Converter) OrderDtoToOrderModel(dto *dto.OrderDto) *model.OrderModel {
 	}
 }
 
-func (c *Converter) OrderPaymentDtoToOrderPaymentModel(dto *dto.OrderPaymentDto) *model.OrderPaymentModel {
+func (c *Converter) MapOrderPaymentDtoToOrderPaymentModel(dto *dto.OrderPaymentDto) *model.OrderPaymentModel {
 	return &model.OrderPaymentModel{
 		Transaction:  dto.Transaction,
 		RequestId:    dto.RequestId,
@@ -43,7 +43,7 @@ func (c *Converter) OrderPaymentDtoToOrderPaymentModel(dto *dto.OrderPaymentDto)
 	}
 }
 
-func (c *Converter) OrderDeliveryDtoToOrderDeliveryModel(dto *dto.OrderDeliveryDto) *model.OrderDeliveryModel {
+func (c *Converter) MapOrderDeliveryDtoToOrderDeliveryModel(dto *dto.OrderDeliveryDto) *model.OrderDeliveryModel {
 	return &model.OrderDeliveryModel{
 		Name:    dto.Name,
 		Phone:   dto.Phone,
@@ -55,7 +55,7 @@ func (c *Converter) OrderDeliveryDtoToOrderDeliveryModel(dto *dto.OrderDeliveryD
 	}
 }
 
-func (c *Converter) OrderItemDtoToOrderItemModel(dto *dto.OrderItemDto) *model.OrderItemModel {
+func (c *Converter) MapOrderItemDtoToOrderItemModel(dto *dto.OrderItemDto, orderUid string) *model.OrderItemModel {
 	return &model.OrderItemModel{
 		ChrtId:      dto.ChrtId,
 		TrackNumber: dto.TrackNumber,
@@ -68,86 +68,16 @@ func (c *Converter) OrderItemDtoToOrderItemModel(dto *dto.OrderItemDto) *model.O
 		NmId:        dto.NmId,
 		Brand:       dto.Brand,
 		Status:      dto.Status,
+		OrderUid:    orderUid,
 	}
 }
 
-func (c *Converter) OrderItemsDtoToOrderItemsModel(dtos *[]dto.OrderItemDto) *[]model.OrderItemModel {
+func (c *Converter) MapOrderItemsDtoToOrderItemsModel(dtos *[]dto.OrderItemDto, orderUid string) *[]model.OrderItemModel {
 	models := make([]model.OrderItemModel, len(*dtos))
 
 	for index, value := range *dtos {
-		models[index] = *c.OrderItemDtoToOrderItemModel(&value)
+		models[index] = *c.MapOrderItemDtoToOrderItemModel(&value, orderUid)
 	}
 
 	return &models
-}
-
-func (c *Converter) OrderModelToOrderDto(model *model.OrderModel) *dto.OrderDto {
-	return &dto.OrderDto{
-		TrackNumber:       model.TrackNumber,
-		Entry:             model.Entry,
-		Delivery:          c.OrderDeliveryModelToOrderDeliveryDto(model.Delivery),
-		Payment:           c.OrderPaymentModelToOrderPaymentDto(model.Payment),
-		Items:             c.OrderItemsModelToOrderItemsDto(model.Items),
-		Locale:            model.Locale,
-		InternalSignature: model.InternalSignature,
-		CustomerId:        model.CustomerId,
-		DeliveryService:   model.DeliveryService,
-		Shardkey:          model.Shardkey,
-		SmId:              model.SmId,
-		DateCreated:       model.DateCreated,
-		OofShard:          model.OofShard,
-	}
-}
-
-func (c *Converter) OrderPaymentModelToOrderPaymentDto(model *model.OrderPaymentModel) *dto.OrderPaymentDto {
-	return &dto.OrderPaymentDto{
-		Transaction:  model.Transaction,
-		RequestId:    model.RequestId,
-		Currency:     model.Currency,
-		Provider:     model.Provider,
-		Amount:       model.Amount,
-		PaymentDt:    model.PaymentDt,
-		Bank:         model.Bank,
-		DeliveryCost: model.DeliveryCost,
-		GoodsTotal:   model.GoodsTotal,
-		CustomFee:    model.CustomFee,
-	}
-}
-
-func (c *Converter) OrderDeliveryModelToOrderDeliveryDto(model *model.OrderDeliveryModel) *dto.OrderDeliveryDto {
-	return &dto.OrderDeliveryDto{
-		Name:    model.Name,
-		Phone:   model.Phone,
-		Zip:     model.Zip,
-		City:    model.City,
-		Address: model.Address,
-		Region:  model.Region,
-		Email:   model.Email,
-	}
-}
-
-func (c *Converter) OrderItemModelToOrderItemDto(model *model.OrderItemModel) *dto.OrderItemDto {
-	return &dto.OrderItemDto{
-		ChrtId:      model.ChrtId,
-		TrackNumber: model.TrackNumber,
-		Price:       model.Price,
-		Rid:         model.Rid,
-		Name:        model.Name,
-		Sale:        model.Sale,
-		Size:        model.Size,
-		TotalPrice:  model.TotalPrice,
-		NmId:        model.NmId,
-		Brand:       model.Brand,
-		Status:      model.Status,
-	}
-}
-
-func (c *Converter) OrderItemsModelToOrderItemsDto(models *[]model.OrderItemModel) *[]dto.OrderItemDto {
-	dtos := make([]dto.OrderItemDto, len(*models))
-
-	for index, value := range *models {
-		dtos[index] = *c.OrderItemModelToOrderItemDto(&value)
-	}
-
-	return &dtos
 }

@@ -24,6 +24,10 @@ type Database struct {
 
 var _ DatabaseInterface = &Database{}
 
+func ConstructorDatabase() *Database {
+	return &Database{}
+}
+
 func (d *Database) Initialize() {
 	username := os.Getenv("POSTGRESQL_USERNAME")
 
@@ -84,11 +88,11 @@ func (d *Database) CreateTables(pool *pgxpool.Pool) {
 func (d *Database) CreateOrderTable(pool *pgxpool.Pool) {
 	query := `
     CREATE TABLE IF NOT EXISTS orders (
-        order_uid UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        order_uid UUID DEFAULT gen_random_uuid() PRIMARY KEY,
         track_number VARCHAR(255),
         entry VARCHAR(255),
-        delivery_uid UUID REFERENCES delivery(delivery_uid),
-        payment_uid UUID REFERENCES payment(payment_uid),
+        delivery_uid UUID REFERENCES orders_delivery(delivery_uid),
+        payment_uid UUID REFERENCES orders_payment(payment_uid),
         locale VARCHAR(255),
         internal_signature VARCHAR(255),
         customer_id VARCHAR(255),
@@ -109,8 +113,8 @@ func (d *Database) CreateOrderTable(pool *pgxpool.Pool) {
 
 func (d *Database) CreateOrderDeliveryTable(pool *pgxpool.Pool) {
 	query := `
-    CREATE TABLE IF NOT EXISTS delivery (
-        delivery_uid UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    CREATE TABLE IF NOT EXISTS orders_delivery (
+        delivery_uid UUID DEFAULT gen_random_uuid() PRIMARY KEY,
         name VARCHAR(255),
         phone VARCHAR(255),
         zip VARCHAR(255),
@@ -130,8 +134,8 @@ func (d *Database) CreateOrderDeliveryTable(pool *pgxpool.Pool) {
 
 func (d *Database) CreateOrderPaymentTable(pool *pgxpool.Pool) {
 	query := `
-    CREATE TABLE IF NOT EXISTS payment (
-        payment_uid UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    CREATE TABLE IF NOT EXISTS orders_payment (
+        payment_uid UUID DEFAULT gen_random_uuid() PRIMARY KEY,
         transaction UUID,
         request_id VARCHAR(255),
         currency VARCHAR(255),
@@ -154,7 +158,7 @@ func (d *Database) CreateOrderPaymentTable(pool *pgxpool.Pool) {
 
 func (d *Database) CreateOrderItems(pool *pgxpool.Pool) {
 	query := `
-	CREATE TABLE IF NOT EXISTS order_items (
+	CREATE TABLE IF NOT EXISTS orders_items (
 		chrt_id INT PRIMARY KEY,
 		track_number VARCHAR(255),
 		price INT,

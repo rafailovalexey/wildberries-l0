@@ -88,6 +88,6 @@ func (s *Service) PublishOrders(sc stan.Conn, subject string) {
 			fmt.Printf("Published: %s\n", message)
 		}
 
-		time.Sleep(1000 * time.Millisecond)
+		time.Sleep(10 * time.Second)
 	}
 }

@@ -1,24 +1,23 @@
 package repository
 
 import (
-	model "github.com/emptyhopes/orders-subscriber/internal/model/orders"
+	dto "github.com/emptyhopes/orders-subscriber/internal/dto/orders"
 	"github.com/emptyhopes/orders-subscriber/storage"
 )
 
 var Cache = storage.ConstructorCache()
+var Database = storage.ConstructorDatabase()
 
 func init() {
-	database := &storage.Database{}
+	Database.Initialize()
 
-	database.Initialize()
-
-	pool := database.GetPool()
+	pool := Database.GetPool()
 	defer pool.Close()
 
-	database.CreateTables(pool)
+	Database.CreateTables(pool)
 }
 
 type OrdersRepositoryInterface interface {
-	Cache(*model.OrderModel) (bool, error)
-	CreateOrder(order *model.OrderModel) error
+	Cache(*dto.OrderDto) *dto.OrderDto
+	CreateOrder(*dto.OrderDto) error
 }

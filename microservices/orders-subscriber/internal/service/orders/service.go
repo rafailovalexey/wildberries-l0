@@ -3,7 +3,6 @@ package orders
 import (
 	"encoding/json"
 	"fmt"
-	converter "github.com/emptyhopes/orders-subscriber/internal/converter/orders"
 	dto "github.com/emptyhopes/orders-subscriber/internal/dto/orders"
 	repository "github.com/emptyhopes/orders-subscriber/internal/repository/orders"
 	"github.com/emptyhopes/orders-subscriber/internal/service"
@@ -11,8 +10,7 @@ import (
 	"log"
 )
 
-type Service struct {
-}
+type Service struct{}
 
 var _ service.OrdersServiceInterface = &Service{}
 
@@ -25,14 +23,9 @@ func (s *Service) SubscribeOrders(message *stan.Msg) {
 		log.Fatalf("error %v\n", err)
 	}
 
-	converterOrders := &converter.Converter{}
-
-	model := converterOrders.OrderDtoToOrderModel(&data)
-
 	repositoryOrders := &repository.Repository{}
 
-	//repositoryOrders.Cache(model)
-	repositoryOrders.CreateOrder(model)
+	repositoryOrders.CreateOrder(&data)
 
-	fmt.Printf("%#v\n", model)
+	fmt.Println()
 }

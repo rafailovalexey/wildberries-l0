@@ -6,15 +6,9 @@ import (
 )
 
 type OrdersConverterInterface interface {
-	OrderDtoToOrderModel(*dto.OrderDto) *model.OrderModel
-	OrderPaymentDtoToOrderPaymentModel(*dto.OrderPaymentDto) *model.OrderPaymentModel
-	OrderDeliveryDtoToOrderDeliveryModel(*dto.OrderDeliveryDto) *model.OrderDeliveryModel
-	OrderItemDtoToOrderItemModel(*dto.OrderItemDto) *model.OrderItemModel
-	OrderItemsDtoToOrderItemsModel(*[]dto.OrderItemDto) *[]model.OrderItemModel
-
-	OrderModelToOrderDto(*model.OrderModel) *dto.OrderDto
-	OrderPaymentModelToOrderPaymentDto(*model.OrderPaymentModel) *dto.OrderPaymentDto
-	OrderDeliveryModelToOrderDeliveryDto(*model.OrderDeliveryModel) *dto.OrderDeliveryDto
-	OrderItemModelToOrderItemDto(*model.OrderItemModel) *dto.OrderItemDto
-	OrderItemsModelToOrderItemsDto(*[]model.OrderItemModel) *[]dto.OrderItemDto
+	MapOrderDtoToOrderModel(*dto.OrderDto, string, string) *model.OrderModel
+	MapOrderPaymentDtoToOrderPaymentModel(*dto.OrderPaymentDto) *model.OrderPaymentModel
+	MapOrderDeliveryDtoToOrderDeliveryModel(*dto.OrderDeliveryDto) *model.OrderDeliveryModel
+	MapOrderItemDtoToOrderItemModel(*dto.OrderItemDto, string) *model.OrderItemModel
+	MapOrderItemsDtoToOrderItemsModel(*[]dto.OrderItemDto, string) *[]model.OrderItemModel
 }

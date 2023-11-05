@@ -3,80 +3,91 @@ package orders
 import (
 	"context"
 	"fmt"
+	converter "github.com/emptyhopes/orders-subscriber/internal/converter/orders"
+	dto "github.com/emptyhopes/orders-subscriber/internal/dto/orders"
 	"github.com/emptyhopes/orders-subscriber/internal/helpers"
 	model "github.com/emptyhopes/orders-subscriber/internal/model/orders"
 	"github.com/emptyhopes/orders-subscriber/internal/repository"
-	"github.com/emptyhopes/orders-subscriber/storage"
+	"log"
 	"sync"
 	"time"
 )
 
 type Repository struct {
-	database storage.Database
-	rwmutex  sync.RWMutex
+	rwmutex sync.RWMutex
 }
 
 var _ repository.OrdersRepositoryInterface = &Repository{}
 
-func (r *Repository) Cache(model *model.OrderModel) (bool, error) {
-	value, isExist := repository.Cache.Get(model.OrderUid)
+func (r *Repository) Cache(order *dto.OrderDto) *dto.OrderDto {
+	value, isExist := repository.Cache.Get(order.OrderUid)
 
 	fmt.Println(value, isExist)
 
 	if !isExist {
 		fmt.Println("set value")
 
-		repository.Cache.Set(model.OrderUid, model, 5*time.Minute)
+		repository.Cache.Set(order.OrderUid, order, 5*time.Minute)
 	}
 
-	return true, nil
+	return value
 }
 
-func (r *Repository) CreateOrder(order *model.OrderModel) error {
+func (r *Repository) CreateOrder(order *dto.OrderDto) error {
 	r.rwmutex.Lock()
 	defer r.rwmutex.Unlock()
 
-	pool := r.database.GetPool()
+	pool := repository.Database.GetPool()
 	defer pool.Close()
 
-	transactions, err := helpers.ConstructorTransactions(context.Background(), pool)
+	converterOrders := &converter.Converter{}
 
+	transactions, err := helpers.ConstructorTransactions(context.Background(), pool)
 	if err != nil {
-		return err
+		log.Fatalf("%v", err)
 	}
 
 	defer transactions.Rollback(context.Background())
 
-	if err := r.insertOrderPayment(transactions, order.Payment); err != nil {
-		return err
+	orderPaymentModel := converterOrders.MapOrderPaymentDtoToOrderPaymentModel(order.Payment)
+	paymentUid, err := r.insertOrderPayment(transactions, orderPaymentModel)
+	if err != nil {
+		log.Fatalf("%v", err)
 	}
 
-	if err := r.insertOrderDelivery(transactions, order.Delivery); err != nil {
-		return err
+	orderDeliveryModel := converterOrders.MapOrderDeliveryDtoToOrderDeliveryModel(order.Delivery)
+	deliveryUid, err := r.insertOrderDelivery(transactions, orderDeliveryModel)
+	if err != nil {
+		log.Fatalf("%v", err)
 	}
 
-	if err := r.insertOrder(transactions, order); err != nil {
-		return err
+	orderModel := converterOrders.MapOrderDtoToOrderModel(order, deliveryUid, paymentUid)
+	if err := r.insertOrder(transactions, orderModel); err != nil {
+		log.Fatalf("%v", err)
 	}
 
-	if err := r.insertOrderItems(transactions, order.Items); err != nil {
-		return err
+	orderItemsModel := converterOrders.MapOrderItemsDtoToOrderItemsModel(order.Items, orderModel.OrderUid)
+	if err := r.insertOrderItems(transactions, orderItemsModel); err != nil {
+		log.Fatalf("%v", err)
 	}
 
 	if err := transactions.Commit(context.Background()); err != nil {
-		return err
+		log.Fatalf("%v", err)
 	}
 
 	return nil
 }
 
-func (r *Repository) insertOrderPayment(transactions *helpers.Transactions, payment *model.OrderPaymentModel) error {
+func (r *Repository) insertOrderPayment(transactions *helpers.Transactions, payment *model.OrderPaymentModel) (string, error) {
+	var paymentUid string
+
 	query := `
-        INSERT INTO payment (transaction, request_id, currency, provider, amount, payment_dt, bank, delivery_cost, goods_total, custom_fee)
+        INSERT INTO orders_payment (transaction, request_id, currency, provider, amount, payment_dt, bank, delivery_cost, goods_total, custom_fee)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        RETURNING payment_uid;
     `
 
-	_ = transactions.QueryRow(
+	err := transactions.QueryRow(
 		context.Background(),
 		query,
 		payment.Transaction,
@@ -89,18 +100,25 @@ func (r *Repository) insertOrderPayment(transactions *helpers.Transactions, paym
 		payment.DeliveryCost,
 		payment.GoodsTotal,
 		payment.CustomFee,
-	)
+	).Scan(&paymentUid)
 
-	return nil
+	if err != nil {
+		return "", err
+	}
+
+	return paymentUid, nil
 }
 
-func (r *Repository) insertOrderDelivery(transactions *helpers.Transactions, delivery *model.OrderDeliveryModel) error {
+func (r *Repository) insertOrderDelivery(transactions *helpers.Transactions, delivery *model.OrderDeliveryModel) (string, error) {
+	var deliveryUid string
+
 	query := `
-        INSERT INTO delivery (name, phone, zip, city, address, region, email)
+        INSERT INTO orders_delivery (name, phone, zip, city, address, region, email)
         VALUES ($1, $2, $3, $4, $5, $6, $7)
+        RETURNING delivery_uid;
     `
 
-	_ = transactions.QueryRow(
+	err := transactions.QueryRow(
 		context.Background(),
 		query,
 		delivery.Name,
@@ -110,9 +128,13 @@ func (r *Repository) insertOrderDelivery(transactions *helpers.Transactions, del
 		delivery.Address,
 		delivery.Region,
 		delivery.Email,
-	)
+	).Scan(&deliveryUid)
 
-	return nil
+	if err != nil {
+		return "", err
+	}
+
+	return deliveryUid, nil
 }
 
 func (r *Repository) insertOrder(transactions *helpers.Transactions, order *model.OrderModel) error {
@@ -121,14 +143,14 @@ func (r *Repository) insertOrder(transactions *helpers.Transactions, order *mode
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
     `
 
-	_ = transactions.QueryRow(
+	err := transactions.QueryRow(
 		context.Background(),
 		query,
 		order.OrderUid,
 		order.TrackNumber,
 		order.Entry,
-		//order.Delivery.Id,
-		//order.Payment.Id,
+		order.DeliveryUid,
+		order.PaymentUid,
 		order.Locale,
 		order.InternalSignature,
 		order.CustomerId,
@@ -137,19 +159,23 @@ func (r *Repository) insertOrder(transactions *helpers.Transactions, order *mode
 		order.SmId,
 		order.DateCreated,
 		order.OofShard,
-	)
+	).Scan()
+
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
 
 func (r *Repository) insertOrderItems(transactions *helpers.Transactions, items *[]model.OrderItemModel) error {
 	query := `
-        INSERT INTO order_items (chrt_id, track_number, price, rid, name, sale, size, total_price, nm_id, brand, status, order_id)
+        INSERT INTO orders_items (chrt_id, track_number, price, rid, name, sale, size, total_price, nm_id, brand, status, order_id)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
     `
 
 	for _, item := range *items {
-		_ = transactions.QueryRow(
+		err := transactions.QueryRow(
 			context.Background(),
 			query,
 			item.ChrtId,
@@ -163,8 +189,12 @@ func (r *Repository) insertOrderItems(transactions *helpers.Transactions, items 
 			item.NmId,
 			item.Brand,
 			item.Status,
-			//item.OrderId,
-		)
+			item.OrderUid,
+		).Scan()
+
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
