@@ -109,8 +109,6 @@ func (s *Service) PublishOrders(sc stan.Conn, subject string) {
 			time.Now().Unix(),
 			"1",
 		)
-		
-		fmt.Println(order)
 
 		message, err := json.Marshal(order)
 

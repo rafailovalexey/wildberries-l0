@@ -13,7 +13,7 @@ services:
       - "../microservices/orders/.env"
     build:
       context: "../microservices/orders"
-      dockerfile: "application.dockerfile"
+      dockerfile: "../microservices/orders/application.dockerfile"
 
   orders-subscriber:
     container_name: "orders-subscriber"
@@ -25,7 +25,7 @@ services:
       - "../microservices/orders-subscriber/.env"
     build:
       context: "../microservices/orders-subscriber"
-      dockerfile: "application.dockerfile"
+      dockerfile: "../microservices/orders-subscriber/subscriber.dockerfile"
 
   orders-publisher:
     container_name: "orders-publisher"
@@ -37,7 +37,7 @@ services:
       - "../microservices/orders-publisher/.env"
     build:
       context: "../microservices/orders-publisher"
-      dockerfile: "application.dockerfile"
+      dockerfile: "../microservices/orders-publisher/publisher.dockerfile"
 
 networks:
   network:

@@ -7,7 +7,6 @@ import (
 	repository "github.com/emptyhopes/orders-subscriber/internal/repository/orders"
 	"github.com/emptyhopes/orders-subscriber/internal/service"
 	"github.com/nats-io/stan.go"
-	"log"
 )
 
 type Service struct{}
@@ -20,7 +19,9 @@ func (s *Service) SubscribeOrders(message *stan.Msg) {
 	err := json.Unmarshal(message.Data, &data)
 
 	if err != nil {
-		log.Fatalf("ошибка %v\n", err)
+		fmt.Printf("произошла ошибка парсинга %v\n", err)
+
+		return
 	}
 
 	repositoryOrders := &repository.Repository{}
@@ -33,13 +34,19 @@ func (s *Service) SubscribeOrders(message *stan.Msg) {
 		orderDto, ok := value.Data.(*dto.OrderDto)
 
 		if !ok {
-			log.Fatalf("ошибка при приведение типа")
+			fmt.Printf("ошибка при приведение типа")
+
+			repositoryOrders.DeleteOrderCacheById(orderDto.OrderUid)
+
+			return
 		}
 
 		err = repositoryOrders.CreateOrder(orderDto)
 
 		if err != nil {
-			log.Fatalf("ошибка при создание заказа %v\n", err)
+			fmt.Printf("ошибка при создание заказа %v\n", err)
+
+			return
 		}
 
 		fmt.Printf("обработал сообщение с order_uid: %s\n", data.OrderUid)
