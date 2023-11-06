@@ -4,6 +4,7 @@ import (
 	"github.com/emptyhopes/orders/internal/converter"
 	dto "github.com/emptyhopes/orders/internal/dto/orders"
 	model "github.com/emptyhopes/orders/internal/model/orders"
+	"time"
 )
 
 type Converter struct{}
@@ -15,16 +16,13 @@ func (c *Converter) OrderDtoToOrderModel(dto *dto.OrderDto) *model.OrderModel {
 		OrderUid:          dto.OrderUid,
 		TrackNumber:       dto.TrackNumber,
 		Entry:             dto.Entry,
-		Delivery:          c.OrderDeliveryDtoToOrderDeliveryModel(dto.Delivery),
-		Payment:           c.OrderPaymentDtoToOrderPaymentModel(dto.Payment),
-		Items:             c.OrderItemsDtoToOrderItemsModel(dto.Items),
 		Locale:            dto.Locale,
 		InternalSignature: dto.InternalSignature,
 		CustomerId:        dto.CustomerId,
 		DeliveryService:   dto.DeliveryService,
 		Shardkey:          dto.Shardkey,
 		SmId:              dto.SmId,
-		DateCreated:       dto.DateCreated,
+		DateCreated:       time.Unix(dto.DateCreated, 0),
 		OofShard:          dto.OofShard,
 	}
 }
@@ -36,7 +34,7 @@ func (c *Converter) OrderPaymentDtoToOrderPaymentModel(dto *dto.OrderPaymentDto)
 		Currency:     dto.Currency,
 		Provider:     dto.Provider,
 		Amount:       dto.Amount,
-		PaymentDt:    dto.PaymentDt,
+		PaymentDt:    time.Unix(dto.PaymentDt, 0),
 		Bank:         dto.Bank,
 		DeliveryCost: dto.DeliveryCost,
 		GoodsTotal:   dto.GoodsTotal,
@@ -58,7 +56,6 @@ func (c *Converter) OrderDeliveryDtoToOrderDeliveryModel(dto *dto.OrderDeliveryD
 
 func (c *Converter) OrderItemDtoToOrderItemModel(dto *dto.OrderItemDto) *model.OrderItemModel {
 	return &model.OrderItemModel{
-		ChrtId:      dto.ChrtId,
 		TrackNumber: dto.TrackNumber,
 		Price:       dto.Price,
 		Rid:         dto.Rid,
@@ -82,22 +79,22 @@ func (c *Converter) OrderItemsDtoToOrderItemsModel(dtos *[]dto.OrderItemDto) *[]
 	return &models
 }
 
-func (c *Converter) OrderModelToOrderDto(model *model.OrderModel) *dto.OrderDto {
+func (c *Converter) OrderModelToOrderDto(order *model.OrderModel, delivery *model.OrderDeliveryModel, payment *model.OrderPaymentModel, items *[]model.OrderItemModel) *dto.OrderDto {
 	return &dto.OrderDto{
-		OrderUid:          model.OrderUid,
-		TrackNumber:       model.TrackNumber,
-		Entry:             model.Entry,
-		Delivery:          c.OrderDeliveryModelToOrderDeliveryDto(model.Delivery),
-		Payment:           c.OrderPaymentModelToOrderPaymentDto(model.Payment),
-		Items:             c.OrderItemsModelToOrderItemsDto(model.Items),
-		Locale:            model.Locale,
-		InternalSignature: model.InternalSignature,
-		CustomerId:        model.CustomerId,
-		DeliveryService:   model.DeliveryService,
-		Shardkey:          model.Shardkey,
-		SmId:              model.SmId,
-		DateCreated:       model.DateCreated,
-		OofShard:          model.OofShard,
+		OrderUid:          order.OrderUid,
+		TrackNumber:       order.TrackNumber,
+		Entry:             order.Entry,
+		Delivery:          c.OrderDeliveryModelToOrderDeliveryDto(delivery),
+		Payment:           c.OrderPaymentModelToOrderPaymentDto(payment),
+		Items:             c.OrderItemsModelToOrderItemsDto(items),
+		Locale:            order.Locale,
+		InternalSignature: order.InternalSignature,
+		CustomerId:        order.CustomerId,
+		DeliveryService:   order.DeliveryService,
+		Shardkey:          order.Shardkey,
+		SmId:              order.SmId,
+		DateCreated:       order.DateCreated.Unix(),
+		OofShard:          order.OofShard,
 	}
 }
 
@@ -108,7 +105,7 @@ func (c *Converter) OrderPaymentModelToOrderPaymentDto(model *model.OrderPayment
 		Currency:     model.Currency,
 		Provider:     model.Provider,
 		Amount:       model.Amount,
-		PaymentDt:    model.PaymentDt,
+		PaymentDt:    model.PaymentDt.Unix(),
 		Bank:         model.Bank,
 		DeliveryCost: model.DeliveryCost,
 		GoodsTotal:   model.GoodsTotal,
@@ -130,7 +127,6 @@ func (c *Converter) OrderDeliveryModelToOrderDeliveryDto(model *model.OrderDeliv
 
 func (c *Converter) OrderItemModelToOrderItemDto(model *model.OrderItemModel) *dto.OrderItemDto {
 	return &dto.OrderItemDto{
-		ChrtId:      model.ChrtId,
 		TrackNumber: model.TrackNumber,
 		Price:       model.Price,
 		Rid:         model.Rid,

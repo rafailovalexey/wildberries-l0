@@ -1,12 +1,18 @@
 package repository
 
 import (
-	model "github.com/emptyhopes/orders/internal/model/orders"
+	dto "github.com/emptyhopes/orders/internal/dto/orders"
 	"github.com/emptyhopes/orders/storage"
 )
 
 var Cache = storage.ConstructorCache()
+var Database = storage.ConstructorDatabase()
+
+func init() {
+	Database.Initialize()
+}
 
 type OrdersRepositoryInterface interface {
-	GetOrderById(id string) (*model.OrderModel, error)
+	//Cache(id string) (*model.OrderModel, error)
+	GetOrderById(id string) (*dto.OrderDto, error)
 }

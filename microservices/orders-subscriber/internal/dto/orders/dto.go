@@ -90,7 +90,6 @@ func ConstructorOrderDto(
 }
 
 func ConstructorOrderDeliveryDto(
-	DeliveryUid string,
 	Name string,
 	Phone string,
 	Zip string,

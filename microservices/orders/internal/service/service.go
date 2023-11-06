@@ -1,9 +1,9 @@
 package service
 
 import (
-	model "github.com/emptyhopes/orders/internal/model/orders"
+	dto "github.com/emptyhopes/orders/internal/dto/orders"
 )
 
 type OrdersServiceInterface interface {
-	GetOrderById(id string) (*model.OrderModel, error)
+	GetOrderById(id string) (*dto.OrderDto, error)
 }

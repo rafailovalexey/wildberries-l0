@@ -12,7 +12,7 @@ type OrdersConverterInterface interface {
 	OrderItemDtoToOrderItemModel(*dto.OrderItemDto) *model.OrderItemModel
 	OrderItemsDtoToOrderItemsModel(*[]dto.OrderItemDto) *[]model.OrderItemModel
 
-	OrderModelToOrderDto(*model.OrderModel) *dto.OrderDto
+	OrderModelToOrderDto(*model.OrderModel, *model.OrderDeliveryModel, *model.OrderPaymentModel, *[]model.OrderItemModel) *dto.OrderDto
 	OrderPaymentModelToOrderPaymentDto(*model.OrderPaymentModel) *dto.OrderPaymentDto
 	OrderDeliveryModelToOrderDeliveryDto(*model.OrderDeliveryModel) *dto.OrderDeliveryDto
 	OrderItemModelToOrderItemDto(*model.OrderItemModel) *dto.OrderItemDto

@@ -1,6 +1,7 @@
 package orders
 
 import (
+	"encoding/json"
 	"github.com/emptyhopes/orders/internal/api"
 	service "github.com/emptyhopes/orders/internal/service/orders"
 	"net/http"
@@ -23,12 +24,22 @@ func (a *Api) GetOrderById(response http.ResponseWriter, request *http.Request) 
 
 	orderService := &service.Service{}
 
-	_, err := orderService.GetOrderById(id)
+	orderDto, err := orderService.GetOrderById(id)
 
 	if err != nil {
 		http.Error(response, "ошибка при получение заказа", http.StatusBadRequest)
 		return
 	}
+
+	orderJson, err := json.Marshal(orderDto)
+	if err != nil {
+		http.Error(response, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response.Header().Set("Content-Type", "application/json")
+	response.WriteHeader(http.StatusOK)
+	response.Write(orderJson)
 }
 
 /*
