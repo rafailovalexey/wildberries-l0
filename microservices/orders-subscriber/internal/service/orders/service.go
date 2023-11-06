@@ -26,6 +26,7 @@ func (s *Service) SubscribeOrders(message *stan.Msg) {
 	repositoryOrders := &repository.Repository{}
 
 	err = repositoryOrders.CreateOrder(&data)
+
 	if err != nil {
 		log.Fatalf("ошибка %v\n", err)
 	}

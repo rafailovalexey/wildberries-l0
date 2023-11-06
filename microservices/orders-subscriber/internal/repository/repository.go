@@ -18,6 +18,7 @@ func init() {
 }
 
 type OrdersRepositoryInterface interface {
-	//Cache(*dto.OrderDto) *dto.OrderDto
+	GetOrderCache(string) (*dto.OrderDto, bool)
+	SetOrderCache(string, *dto.OrderDto)
 	CreateOrder(*dto.OrderDto) error
 }

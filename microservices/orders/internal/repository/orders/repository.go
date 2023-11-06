@@ -8,6 +8,7 @@ import (
 	"github.com/emptyhopes/orders/internal/repository"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"sync"
+	"time"
 )
 
 type Repository struct {
@@ -16,15 +17,19 @@ type Repository struct {
 
 var _ repository.OrdersRepositoryInterface = &Repository{}
 
-//func (r *Repository) GetCachedOrderById(orderUid string, orderDto *dto.OrderDto) (*dto.OrderDto, error) {
-//	orderCached, isExist := repository.Cache.Get(orderUid)
-//
-//	if !isExist {
-//		repository.Cache.Set(orderUid, orderDto, 5*time.Minute)
-//	}
-//
-//	return orderCached, nil
-//}
+func (r *Repository) GetOrderCache(id string) (*dto.OrderDto, bool) {
+	orderCached, isExist := repository.Cache.Get(id)
+
+	if orderDto, ok := orderCached.(*dto.OrderDto); ok {
+		return orderDto, isExist
+	}
+
+	return nil, false
+}
+
+func (r *Repository) SetOrderCache(id string, orderDto *dto.OrderDto) {
+	repository.Cache.Set(id, orderDto, 5*time.Minute)
+}
 
 func (r *Repository) GetOrderById(orderUid string) (*dto.OrderDto, error) {
 	r.rwmutex.Lock()

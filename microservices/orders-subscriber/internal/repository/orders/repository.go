@@ -8,6 +8,7 @@ import (
 	model "github.com/emptyhopes/orders-subscriber/internal/model/orders"
 	"github.com/emptyhopes/orders-subscriber/internal/repository"
 	"sync"
+	"time"
 )
 
 type Repository struct {
@@ -16,15 +17,19 @@ type Repository struct {
 
 var _ repository.OrdersRepositoryInterface = &Repository{}
 
-//func (r *Repository) Cache(order *dto.OrderDto) *dto.OrderDto {
-//	value, isExist := repository.Cache.Get(order.OrderUid)
-//
-//	if !isExist {
-//		repository.Cache.Set(order.OrderUid, order, 5*time.Minute)
-//	}
-//
-//	return value
-//}
+func (r *Repository) GetOrderCache(id string) (*dto.OrderDto, bool) {
+	orderCached, isExist := repository.Cache.Get(id)
+
+	if orderDto, ok := orderCached.(*dto.OrderDto); ok {
+		return orderDto, isExist
+	}
+
+	return nil, false
+}
+
+func (r *Repository) SetOrderCache(id string, orderDto *dto.OrderDto) {
+	repository.Cache.Set(id, orderDto, 5*time.Minute)
+}
 
 func (r *Repository) CreateOrder(order *dto.OrderDto) error {
 	r.rwmutex.Lock()

@@ -17,6 +17,7 @@ func (a *Api) GetOrderById(response http.ResponseWriter, request *http.Request) 
 
 	if len(segments) != 4 || segments[1] != "v1" || segments[2] != "orders" {
 		http.Error(response, "неверный URL", http.StatusBadRequest)
+
 		return
 	}
 
@@ -27,13 +28,16 @@ func (a *Api) GetOrderById(response http.ResponseWriter, request *http.Request) 
 	orderDto, err := orderService.GetOrderById(id)
 
 	if err != nil {
-		http.Error(response, "ошибка при получение заказа", http.StatusBadRequest)
+		http.Error(response, err.Error(), http.StatusBadRequest)
+
 		return
 	}
 
 	orderJson, err := json.Marshal(orderDto)
+
 	if err != nil {
 		http.Error(response, err.Error(), http.StatusInternalServerError)
+
 		return
 	}
 

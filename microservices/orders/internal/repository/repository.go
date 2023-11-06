@@ -13,6 +13,7 @@ func init() {
 }
 
 type OrdersRepositoryInterface interface {
-	//Cache(id string) (*model.OrderModel, error)
-	GetOrderById(id string) (*dto.OrderDto, error)
+	GetOrderCache(string) (*dto.OrderDto, bool)
+	SetOrderCache(string, *dto.OrderDto)
+	GetOrderById(string) (*dto.OrderDto, error)
 }
