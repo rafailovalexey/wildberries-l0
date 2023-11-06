@@ -41,7 +41,6 @@ type OrderPaymentDto struct {
 }
 
 type OrderItemDto struct {
-	ChrtId      int    `json:"chrt_id"`
 	TrackNumber string `json:"track_number"`
 	Price       int    `json:"price"`
 	Rid         string `json:"rid"`

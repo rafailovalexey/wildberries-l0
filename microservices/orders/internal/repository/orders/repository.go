@@ -55,7 +55,7 @@ func (r *Repository) GetOrderById(orderUid string) (*dto.OrderDto, error) {
 		return nil, err
 	}
 
-	orderDto := converterOrders.OrderModelToOrderDto(orderModel, orderDeliveryModel, orderPaymentModel, orderItemsModel)
+	orderDto := converterOrders.MapOrderModelToOrderDto(orderModel, orderDeliveryModel, orderPaymentModel, orderItemsModel)
 
 	return orderDto, nil
 }

@@ -81,3 +81,74 @@ func (c *Converter) MapOrderItemsDtoToOrderItemsModel(dtos *[]dto.OrderItemDto, 
 
 	return &models
 }
+
+func (c *Converter) MapOrderModelToOrderDto(order *model.OrderModel, delivery *model.OrderDeliveryModel, payment *model.OrderPaymentModel, items *[]model.OrderItemModel) *dto.OrderDto {
+	return &dto.OrderDto{
+		OrderUid:          order.OrderUid,
+		TrackNumber:       order.TrackNumber,
+		Entry:             order.Entry,
+		Delivery:          c.MapOrderDeliveryModelToOrderDeliveryDto(delivery),
+		Payment:           c.MapOrderPaymentModelToOrderPaymentDto(payment),
+		Items:             c.MapOrderItemsModelToOrderItemsDto(items),
+		Locale:            order.Locale,
+		InternalSignature: order.InternalSignature,
+		CustomerId:        order.CustomerId,
+		DeliveryService:   order.DeliveryService,
+		Shardkey:          order.Shardkey,
+		SmId:              order.SmId,
+		DateCreated:       order.DateCreated.Unix(),
+		OofShard:          order.OofShard,
+	}
+}
+
+func (c *Converter) MapOrderPaymentModelToOrderPaymentDto(model *model.OrderPaymentModel) *dto.OrderPaymentDto {
+	return &dto.OrderPaymentDto{
+		Transaction:  model.Transaction,
+		RequestId:    model.RequestId,
+		Currency:     model.Currency,
+		Provider:     model.Provider,
+		Amount:       model.Amount,
+		PaymentDt:    model.PaymentDt.Unix(),
+		Bank:         model.Bank,
+		DeliveryCost: model.DeliveryCost,
+		GoodsTotal:   model.GoodsTotal,
+		CustomFee:    model.CustomFee,
+	}
+}
+
+func (c *Converter) MapOrderDeliveryModelToOrderDeliveryDto(model *model.OrderDeliveryModel) *dto.OrderDeliveryDto {
+	return &dto.OrderDeliveryDto{
+		Name:    model.Name,
+		Phone:   model.Phone,
+		Zip:     model.Zip,
+		City:    model.City,
+		Address: model.Address,
+		Region:  model.Region,
+		Email:   model.Email,
+	}
+}
+
+func (c *Converter) MapOrderItemModelToOrderItemDto(model *model.OrderItemModel) *dto.OrderItemDto {
+	return &dto.OrderItemDto{
+		TrackNumber: model.TrackNumber,
+		Price:       model.Price,
+		Rid:         model.Rid,
+		Name:        model.Name,
+		Sale:        model.Sale,
+		Size:        model.Size,
+		TotalPrice:  model.TotalPrice,
+		NmId:        model.NmId,
+		Brand:       model.Brand,
+		Status:      model.Status,
+	}
+}
+
+func (c *Converter) MapOrderItemsModelToOrderItemsDto(models *[]model.OrderItemModel) *[]dto.OrderItemDto {
+	dtos := make([]dto.OrderItemDto, len(*models))
+
+	for index, value := range *models {
+		dtos[index] = *c.MapOrderItemModelToOrderItemDto(&value)
+	}
+
+	return &dtos
+}
