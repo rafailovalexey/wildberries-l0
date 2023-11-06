@@ -64,7 +64,7 @@ func (r *Repository) getOrder(pool *pgxpool.Pool, orderUid string) (*model.Order
 	var order *model.OrderModel
 
 	query := `
-        SELECT * FROM orders_payment WHERE payment_uid = $1
+        SELECT * FROM orders WHERE order_uid = $1
     `
 
 	err := pool.QueryRow(
