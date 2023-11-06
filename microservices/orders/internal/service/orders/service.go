@@ -1,6 +1,8 @@
 package orders
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 	dto "github.com/emptyhopes/orders/internal/dto/orders"
 	repository "github.com/emptyhopes/orders/internal/repository/orders"
@@ -15,8 +17,13 @@ func (s *Service) GetOrderById(id string) (*dto.OrderDto, error) {
 	orderRepository := &repository.Repository{}
 
 	orderDto, err := orderRepository.GetOrderById(id)
+
 	if err != nil {
-		fmt.Println("ya tyt", err)
+		if errors.Is(err, sql.ErrNoRows) {
+			fmt.Println("ya tyt", err)
+			return nil, fmt.Errorf("пользователь не найден с order_uid: %s", orderDto.OrderUid)
+		}
+
 		return nil, err
 	}
 
