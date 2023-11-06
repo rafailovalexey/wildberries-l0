@@ -2,6 +2,7 @@ package orders
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/emptyhopes/orders/internal/api"
 	service "github.com/emptyhopes/orders/internal/service/orders"
 	"net/http"
@@ -28,6 +29,12 @@ func (a *Api) GetOrderById(response http.ResponseWriter, request *http.Request) 
 	orderDto, err := orderService.GetOrderById(id)
 
 	if err != nil {
+		if strings.Contains(err.Error(), "no rows in result set") {
+			http.Error(response, fmt.Sprintf("пользователь не найден с order_uid: %s", id), http.StatusBadRequest)
+
+			return
+		}
+
 		http.Error(response, err.Error(), http.StatusBadRequest)
 
 		return
@@ -43,11 +50,19 @@ func (a *Api) GetOrderById(response http.ResponseWriter, request *http.Request) 
 
 	response.Header().Set("Content-Type", "application/json")
 	response.WriteHeader(http.StatusOK)
-	response.Write(orderJson)
+
+	_, err = response.Write(orderJson)
+
+	if err != nil {
+		http.Error(response, err.Error(), http.StatusInternalServerError)
+
+		return
+	}
 }
 
 /*
-Здесь я использовал парсинг URL, для того, чтобы добиться REST поведения
+OrdersHandler
+Использовал парсинг URL, для того, чтобы добиться REST поведения
 GetAllOrders - /v1/orders
 GetOrderById - /v1/orders/:id
 */
@@ -56,6 +71,7 @@ func (a *Api) OrdersHandler(response http.ResponseWriter, request *http.Request)
 	case http.MethodGet:
 		if strings.HasPrefix(request.URL.Path, "/v1/orders/") {
 			a.GetOrderById(response, request)
+
 			return
 		}
 

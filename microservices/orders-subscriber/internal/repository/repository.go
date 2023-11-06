@@ -18,7 +18,9 @@ func init() {
 }
 
 type OrdersRepositoryInterface interface {
-	GetOrderCache(string) (*dto.OrderDto, bool)
+	GetOrdersCache() map[string]storage.CacheItem
+	GetOrderCacheById(string) (*dto.OrderDto, bool)
 	SetOrderCache(string, *dto.OrderDto)
+	DeleteOrderCacheById(id string)
 	CreateOrder(*dto.OrderDto) error
 }

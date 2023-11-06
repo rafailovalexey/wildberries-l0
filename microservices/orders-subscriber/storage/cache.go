@@ -6,9 +6,9 @@ import (
 )
 
 type CacheInterface interface {
-	Set(string, interface{}, time.Duration)
+	GetCache() map[string]CacheItem
 	Get(string) (interface{}, bool)
-	ForEach(func(key string, value interface{}))
+	Set(string, interface{}, time.Duration)
 	Delete(string)
 	Clear()
 }
@@ -34,27 +34,17 @@ func ConstructorCache() *Cache {
 	return cache
 }
 
-func (c *Cache) Set(key string, value interface{}, ttl time.Duration) {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-
-	expires := time.Now().Add(ttl)
-
-	item := CacheItem{
-		Data:    value,
-		Expires: expires,
-	}
-
-	c.items[key] = item
+func (c *Cache) GetCache() map[string]CacheItem {
+	return c.items
 }
 
 func (c *Cache) Get(key string) (interface{}, bool) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	item, found := c.items[key]
+	item, isExist := c.items[key]
 
-	if !found {
+	if !isExist {
 		return nil, false
 	}
 
@@ -67,19 +57,18 @@ func (c *Cache) Get(key string) (interface{}, bool) {
 	return item.Data, true
 }
 
-func (c *Cache) ForEach(callback func(key string, value interface{})) {
+func (c *Cache) Set(key string, value interface{}, ttl time.Duration) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	for key, item := range c.items {
-		if time.Now().After(item.Expires) {
-			delete(c.items, key)
+	expires := time.Now().Add(ttl)
 
-			continue
-		}
-
-		callback(key, item.Data)
+	item := CacheItem{
+		Data:    value,
+		Expires: expires,
 	}
+
+	c.items[key] = item
 }
 
 func (c *Cache) Delete(key string) {

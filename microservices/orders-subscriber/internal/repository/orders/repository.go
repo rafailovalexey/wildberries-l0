@@ -7,6 +7,7 @@ import (
 	"github.com/emptyhopes/orders-subscriber/internal/helpers"
 	model "github.com/emptyhopes/orders-subscriber/internal/model/orders"
 	"github.com/emptyhopes/orders-subscriber/internal/repository"
+	"github.com/emptyhopes/orders-subscriber/storage"
 	"sync"
 	"time"
 )
@@ -17,7 +18,11 @@ type Repository struct {
 
 var _ repository.OrdersRepositoryInterface = &Repository{}
 
-func (r *Repository) GetOrderCache(id string) (*dto.OrderDto, bool) {
+func (r *Repository) GetOrdersCache() map[string]storage.CacheItem {
+	return repository.Cache.GetCache()
+}
+
+func (r *Repository) GetOrderCacheById(id string) (*dto.OrderDto, bool) {
 	orderCached, isExist := repository.Cache.Get(id)
 
 	if orderDto, ok := orderCached.(*dto.OrderDto); ok {
@@ -29,6 +34,10 @@ func (r *Repository) GetOrderCache(id string) (*dto.OrderDto, bool) {
 
 func (r *Repository) SetOrderCache(id string, orderDto *dto.OrderDto) {
 	repository.Cache.Set(id, orderDto, 5*time.Minute)
+}
+
+func (r *Repository) DeleteOrderCacheById(id string) {
+	repository.Cache.Delete(id)
 }
 
 func (r *Repository) CreateOrder(order *dto.OrderDto) error {

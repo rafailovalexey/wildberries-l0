@@ -1,12 +1,10 @@
 package orders
 
 import (
-	"errors"
 	"fmt"
 	dto "github.com/emptyhopes/orders/internal/dto/orders"
 	repository "github.com/emptyhopes/orders/internal/repository/orders"
 	"github.com/emptyhopes/orders/internal/service"
-	"strings"
 )
 
 type Service struct{}
@@ -27,10 +25,6 @@ func (s *Service) GetOrderById(id string) (*dto.OrderDto, error) {
 	orderDto, err := orderRepository.GetOrderById(id)
 
 	if err != nil {
-		if strings.Contains(err.Error(), "no rows in result set") {
-			return nil, errors.New(fmt.Sprintf("пользователь не найден с order_uid: %s\n", orderDto.OrderUid))
-		}
-
 		return nil, err
 	}
 

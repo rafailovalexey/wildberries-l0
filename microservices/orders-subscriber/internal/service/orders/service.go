@@ -25,11 +25,27 @@ func (s *Service) SubscribeOrders(message *stan.Msg) {
 
 	repositoryOrders := &repository.Repository{}
 
-	err = repositoryOrders.CreateOrder(&data)
+	repositoryOrders.SetOrderCache(data.OrderUid, &data)
 
-	if err != nil {
-		log.Fatalf("ошибка %v\n", err)
+	ordersCache := repositoryOrders.GetOrdersCache()
+
+	for _, value := range ordersCache {
+		orderDto, ok := value.Data.(*dto.OrderDto)
+
+		if !ok {
+			log.Fatalf("ошибка при приведение типа")
+		}
+
+		err = repositoryOrders.CreateOrder(orderDto)
+
+		if err != nil {
+			log.Fatalf("ошибка при создание заказа %v\n", err)
+		}
+
+		fmt.Printf("обработал сообщение с order_uid: %s\n", data.OrderUid)
+
+		repositoryOrders.DeleteOrderCacheById(orderDto.OrderUid)
+
+		fmt.Printf("очистил кэш для order_uid: %s\n", data.OrderUid)
 	}
-
-	fmt.Printf("обработал сообщение с order_uid: %s\n", data.OrderUid)
 }

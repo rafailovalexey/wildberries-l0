@@ -31,7 +31,7 @@ func (s *Service) PublishOrders(sc stan.Conn, subject string) {
 		"USD",
 		"wbpay",
 		1817,
-		int64(time.Now().Nanosecond()),
+		time.Now().Unix(),
 		"alpha",
 		1500,
 		317,
@@ -106,9 +106,11 @@ func (s *Service) PublishOrders(sc stan.Conn, subject string) {
 			"meest",
 			"9",
 			99,
-			int64(time.Now().Nanosecond()),
+			time.Now().Unix(),
 			"1",
 		)
+		
+		fmt.Println(order)
 
 		message, err := json.Marshal(order)
 
