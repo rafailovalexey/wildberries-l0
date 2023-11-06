@@ -45,7 +45,7 @@ func Subscribe(sc stan.Conn, subject string, queue string, handler stan.MsgHandl
 
 	defer subscribe.Unsubscribe()
 
-	fmt.Printf("подписался: %s\n", subject)
+	fmt.Printf("подписался на очередь сообщений: %s\n", subject)
 
 	channel := make(chan os.Signal, 1)
 	signal.Notify(channel, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)

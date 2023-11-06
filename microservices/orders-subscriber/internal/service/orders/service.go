@@ -2,6 +2,7 @@ package orders
 
 import (
 	"encoding/json"
+	"fmt"
 	dto "github.com/emptyhopes/orders-subscriber/internal/dto/orders"
 	repository "github.com/emptyhopes/orders-subscriber/internal/repository/orders"
 	"github.com/emptyhopes/orders-subscriber/internal/service"
@@ -28,4 +29,6 @@ func (s *Service) SubscribeOrders(message *stan.Msg) {
 	if err != nil {
 		log.Fatalf("ошибка %v\n", err)
 	}
+
+	fmt.Printf("обработал сообщение с order_uid: %s\n", data.OrderUid)
 }

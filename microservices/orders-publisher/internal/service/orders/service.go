@@ -84,7 +84,7 @@ func (s *Service) PublishOrders(sc stan.Conn, subject string) {
 		}
 
 		if err == nil {
-			fmt.Printf("опубликовал: %s\n", message)
+			fmt.Printf("опубликовал сообщение с order_uid: %s\n", order.OrderUid)
 		}
 
 		time.Sleep(10 * time.Second)
