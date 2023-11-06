@@ -49,8 +49,47 @@ func (s *Service) PublishOrders(sc stan.Conn, subject string) {
 		"Vivienne Sabo",
 		202,
 	)
+	item2 := dto.ConstructorOrderItemDto(
+		"WBILMTESTTRACK",
+		453,
+		uuid.New().String(),
+		"Mascaras",
+		30,
+		"0",
+		317,
+		2389212,
+		"Vivienne Sabo",
+		202,
+	)
+	item3 := dto.ConstructorOrderItemDto(
+		"WBILMTESTTRACK",
+		453,
+		uuid.New().String(),
+		"Mascaras",
+		30,
+		"0",
+		317,
+		2389212,
+		"Vivienne Sabo",
+		202,
+	)
+	item4 := dto.ConstructorOrderItemDto(
+		"WBILMTESTTRACK",
+		453,
+		uuid.New().String(),
+		"Mascaras",
+		30,
+		"0",
+		317,
+		2389212,
+		"Vivienne Sabo",
+		202,
+	)
 	items := &[]dto.OrderItemDto{
 		*item1,
+		*item2,
+		*item3,
+		*item4,
 	}
 
 	for {

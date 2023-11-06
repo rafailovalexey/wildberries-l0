@@ -2,7 +2,6 @@ package orders
 
 import (
 	"context"
-	"fmt"
 	converter "github.com/emptyhopes/orders/internal/converter/orders"
 	dto "github.com/emptyhopes/orders/internal/dto/orders"
 	model "github.com/emptyhopes/orders/internal/model/orders"
@@ -36,31 +35,26 @@ func (r *Repository) GetOrderById(orderUid string) (*dto.OrderDto, error) {
 
 	converterOrders := &converter.Converter{}
 
-	fmt.Println("ya tyt 1")
 	orderModel, err := r.getOrder(pool, orderUid)
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println("ya tyt 2")
 	orderDeliveryModel, err := r.getOrderDelivery(pool, orderModel.DeliveryUid)
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println("ya tyt 3")
 	orderPaymentModel, err := r.getOrderPayment(pool, orderModel.PaymentUid)
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println("ya tyt 4")
 	orderItemsModel, err := r.getOrderItems(pool, orderModel.OrderUid)
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println("ya tyt 5")
 	orderDto := converterOrders.MapOrderModelToOrderDto(orderModel, orderDeliveryModel, orderPaymentModel, orderItemsModel)
 
 	return orderDto, nil
