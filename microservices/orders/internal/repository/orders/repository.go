@@ -2,6 +2,7 @@ package orders
 
 import (
 	"context"
+	"fmt"
 	converter "github.com/emptyhopes/orders/internal/converter/orders"
 	dto "github.com/emptyhopes/orders/internal/dto/orders"
 	model "github.com/emptyhopes/orders/internal/model/orders"
@@ -35,43 +36,76 @@ func (r *Repository) GetOrderById(orderUid string) (*dto.OrderDto, error) {
 
 	converterOrders := &converter.Converter{}
 
+	fmt.Println("ya tyt 1")
 	orderModel, err := r.getOrder(pool, orderUid)
 	if err != nil {
 		return nil, err
 	}
 
+	fmt.Println("ya tyt 2")
 	orderDeliveryModel, err := r.getOrderDelivery(pool, orderModel.DeliveryUid)
 	if err != nil {
 		return nil, err
 	}
 
+	fmt.Println("ya tyt 3")
 	orderPaymentModel, err := r.getOrderPayment(pool, orderModel.PaymentUid)
 	if err != nil {
 		return nil, err
 	}
 
+	fmt.Println("ya tyt 4")
 	orderItemsModel, err := r.getOrderItems(pool, orderModel.OrderUid)
 	if err != nil {
 		return nil, err
 	}
 
+	fmt.Println("ya tyt 5")
 	orderDto := converterOrders.MapOrderModelToOrderDto(orderModel, orderDeliveryModel, orderPaymentModel, orderItemsModel)
 
 	return orderDto, nil
 }
 
 func (r *Repository) getOrder(pool *pgxpool.Pool, orderUid string) (*model.OrderModel, error) {
-	var order model.OrderModel
-
 	query := `
-        SELECT * FROM orders WHERE order_uid = $1
+        SELECT
+           	order_uid,         
+			track_number,      
+			entry,            
+			delivery_uid,      
+			payment_uid,       
+			locale,           
+			internal_signature,
+			customer_id,      
+			delivery_service, 
+			shardkey,       
+			sm_id,          
+			date_created,    
+			oof_shard         
+        FROM orders WHERE order_uid = $1
     `
+
+	order := model.OrderModel{}
 
 	err := pool.QueryRow(
 		context.Background(),
 		query,
 		orderUid,
-	).Scan(&order)
+	).Scan(
+		&order.OrderUid,
+		&order.TrackNumber,
+		&order.Entry,
+		&order.DeliveryUid,
+		&order.PaymentUid,
+		&order.Locale,
+		&order.InternalSignature,
+		&order.CustomerId,
+		&order.DeliveryService,
+		&order.Shardkey,
+		&order.SmId,
+		&order.DateCreated,
+		&order.OofShard,
+	)
 
 	if err != nil {
 		return nil, err
@@ -84,14 +118,38 @@ func (r *Repository) getOrderPayment(pool *pgxpool.Pool, paymentUid string) (*mo
 	var payment model.OrderPaymentModel
 
 	query := `
-        SELECT * FROM orders_payment WHERE payment_uid = $1
+        SELECT
+			payment_uid,   
+			transaction,  
+			request_id,    
+			currency,     
+			provider,     
+			amount,       
+			payment_dt,    
+			bank,         
+			delivery_cost, 
+			goods_total,   
+			custom_fee    
+        FROM orders_payment WHERE payment_uid = $1
     `
 
 	err := pool.QueryRow(
 		context.Background(),
 		query,
 		paymentUid,
-	).Scan(&payment)
+	).Scan(
+		&payment.PaymentUid,
+		&payment.Transaction,
+		&payment.RequestId,
+		&payment.Currency,
+		&payment.Provider,
+		&payment.Amount,
+		&payment.PaymentDt,
+		&payment.Bank,
+		&payment.DeliveryCost,
+		&payment.GoodsTotal,
+		&payment.CustomFee,
+	)
 
 	if err != nil {
 		return nil, err
@@ -104,14 +162,32 @@ func (r *Repository) getOrderDelivery(pool *pgxpool.Pool, deliveryUid string) (*
 	var delivery model.OrderDeliveryModel
 
 	query := `
-        SELECT * FROM orders_delivery WHERE delivery_uid = $1
+        SELECT 
+            delivery_uid, 
+			name,       
+			phone,      
+			zip,       
+			city,       
+			address,    
+			region,     
+			email      
+        FROM orders_delivery WHERE delivery_uid = $1
     `
 
 	err := pool.QueryRow(
 		context.Background(),
 		query,
 		deliveryUid,
-	).Scan(&delivery)
+	).Scan(
+		&delivery.DeliveryUid,
+		&delivery.Name,
+		&delivery.Phone,
+		&delivery.Zip,
+		&delivery.City,
+		&delivery.Address,
+		&delivery.Region,
+		&delivery.Email,
+	)
 
 	if err != nil {
 		return nil, err
@@ -121,20 +197,60 @@ func (r *Repository) getOrderDelivery(pool *pgxpool.Pool, deliveryUid string) (*
 }
 
 func (r *Repository) getOrderItems(pool *pgxpool.Pool, orderUid string) (*[]model.OrderItemModel, error) {
-	items := make([]model.OrderItemModel, 0, 10)
-
 	query := `
-        SELECT * FROM orders_items WHERE order_uid = $1
+        SELECT
+            chrt_id,     
+			track_number,
+			price,      
+			rid,        
+			name,       
+			sale,       
+			size,       
+			total_price, 
+			nm_id,       
+			brand,      
+			status,     
+			order_uid   
+        FROM orders_items WHERE order_uid = $1
     `
 
-	err := pool.QueryRow(
+	rows, err := pool.Query(
 		context.Background(),
 		query,
 		orderUid,
-	).Scan(&items)
+	)
 
 	if err != nil {
 		return nil, err
+	}
+
+	defer rows.Close()
+
+	items := make([]model.OrderItemModel, 0, 10)
+
+	for rows.Next() {
+		item := model.OrderItemModel{}
+
+		err := rows.Scan(
+			&item.ChrtId,
+			&item.TrackNumber,
+			&item.Price,
+			&item.Rid,
+			&item.Name,
+			&item.Sale,
+			&item.Size,
+			&item.TotalPrice,
+			&item.NmId,
+			&item.Brand,
+			&item.Status,
+			&item.OrderUid,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		items = append(items, item)
 	}
 
 	return &items, nil

@@ -97,7 +97,7 @@ func (d *Database) CreateOrderTable(pool *pgxpool.Pool) {
         internal_signature VARCHAR(255),
         customer_id VARCHAR(255),
         delivery_service VARCHAR(255),
-        shardkey INT,
+        shardkey VARCHAR(255),
         sm_id INT,
         date_created TIMESTAMP,
         oof_shard VARCHAR(255)
