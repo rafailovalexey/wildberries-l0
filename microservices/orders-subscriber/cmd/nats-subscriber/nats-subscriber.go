@@ -26,7 +26,7 @@ func Start() {
 	sc, err := stan.Connect(cluster, "subscriber-1", stan.NatsURL(url))
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("ошибка %v\n", err)
 	}
 
 	defer sc.Close()
@@ -40,12 +40,12 @@ func Subscribe(sc stan.Conn, subject string, queue string, handler stan.MsgHandl
 	subscribe, err := sc.QueueSubscribe(subject, queue, handler)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("ошибка %v\n", err)
 	}
 
 	defer subscribe.Unsubscribe()
 
-	fmt.Printf("Subscribed: %s\n", subject)
+	fmt.Printf("подписался: %s\n", subject)
 
 	channel := make(chan os.Signal, 1)
 	signal.Notify(channel, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)

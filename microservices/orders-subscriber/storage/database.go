@@ -72,7 +72,7 @@ func (d *Database) GetPool() *pgxpool.Pool {
 	pool, err := pgxpool.Connect(context.Background(), d.credentials)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("ошибка %v\n", err)
 	}
 
 	return pool
@@ -107,7 +107,7 @@ func (d *Database) CreateOrderTable(pool *pgxpool.Pool) {
 	_, err := pool.Exec(context.Background(), query)
 
 	if err != nil {
-		log.Fatalf("Error creating tables: %v\n", err)
+		log.Fatalf("ошибка создания таблицы: %v\n", err)
 	}
 }
 
@@ -128,7 +128,7 @@ func (d *Database) CreateOrderDeliveryTable(pool *pgxpool.Pool) {
 	_, err := pool.Exec(context.Background(), query)
 
 	if err != nil {
-		log.Fatalf("Error creating tables: %v\n", err)
+		log.Fatalf("ошибка создания таблицы: %v\n", err)
 	}
 }
 
@@ -152,7 +152,7 @@ func (d *Database) CreateOrderPaymentTable(pool *pgxpool.Pool) {
 	_, err := pool.Exec(context.Background(), query)
 
 	if err != nil {
-		log.Fatalf("Error creating tables: %v\n", err)
+		log.Fatalf("ошибка создания таблицы: %v\n", err)
 	}
 }
 
@@ -177,6 +177,6 @@ func (d *Database) CreateOrderItems(pool *pgxpool.Pool) {
 	_, err := pool.Exec(context.Background(), query)
 
 	if err != nil {
-		log.Fatalf("Error creating tables: %v\n", err)
+		log.Fatalf("ошибка создания таблицы: %v\n", err)
 	}
 }

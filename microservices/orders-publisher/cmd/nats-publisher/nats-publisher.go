@@ -22,7 +22,7 @@ func Start() {
 
 	sc, err := stan.Connect(cluster, "publisher-1", stan.NatsURL(url))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("ошибка %v\n", err)
 	}
 	defer sc.Close()
 

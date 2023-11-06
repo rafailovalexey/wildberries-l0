@@ -74,17 +74,17 @@ func (s *Service) PublishOrders(sc stan.Conn, subject string) {
 		message, err := json.Marshal(order)
 
 		if err != nil {
-			log.Printf("Error: %v\n", err)
+			log.Fatalf("ошибка %v\n", err)
 		}
 
 		err = sc.Publish(subject, []byte(message))
 
 		if err != nil {
-			log.Printf("Error: %v\n", err)
+			log.Fatalf("ошибка %v\n", err)
 		}
 
 		if err == nil {
-			fmt.Printf("Published: %s\n", message)
+			fmt.Printf("опубликовал: %s\n", message)
 		}
 
 		time.Sleep(10 * time.Second)

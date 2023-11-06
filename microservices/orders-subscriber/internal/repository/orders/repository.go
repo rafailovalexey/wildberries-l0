@@ -2,7 +2,6 @@ package orders
 
 import (
 	"context"
-	"fmt"
 	converter "github.com/emptyhopes/orders-subscriber/internal/converter/orders"
 	dto "github.com/emptyhopes/orders-subscriber/internal/dto/orders"
 	"github.com/emptyhopes/orders-subscriber/internal/helpers"
@@ -20,11 +19,7 @@ var _ repository.OrdersRepositoryInterface = &Repository{}
 //func (r *Repository) Cache(order *dto.OrderDto) *dto.OrderDto {
 //	value, isExist := repository.Cache.Get(order.OrderUid)
 //
-//	fmt.Println(value, isExist)
-//
 //	if !isExist {
-//		fmt.Println("set value")
-//
 //		repository.Cache.Set(order.OrderUid, order, 5*time.Minute)
 //	}
 //
@@ -48,32 +43,26 @@ func (r *Repository) CreateOrder(order *dto.OrderDto) error {
 	defer transactions.Rollback(context.Background())
 
 	orderPaymentModel := converterOrders.MapOrderPaymentDtoToOrderPaymentModel(order.Payment)
-	fmt.Println("ya tyt 1")
 	paymentUid, err := r.insertOrderPayment(transactions, orderPaymentModel)
 	if err != nil {
 		return err
 	}
 
 	orderDeliveryModel := converterOrders.MapOrderDeliveryDtoToOrderDeliveryModel(order.Delivery)
-	fmt.Println("ya tyt 2")
 	deliveryUid, err := r.insertOrderDelivery(transactions, orderDeliveryModel)
 	if err != nil {
 		return err
 	}
 
 	orderModel := converterOrders.MapOrderDtoToOrderModel(order, deliveryUid, paymentUid)
-	fmt.Println("ya tyt 3")
 	if err := r.insertOrder(transactions, orderModel); err != nil {
 		return err
 	}
 
 	orderItemsModel := converterOrders.MapOrderItemsDtoToOrderItemsModel(order.Items, orderModel.OrderUid)
-	fmt.Println("ya tyt 4")
 	if err := r.insertOrderItems(transactions, orderItemsModel); err != nil {
 		return err
 	}
-
-	fmt.Println("ya tyt 5")
 
 	if err := transactions.Commit(context.Background()); err != nil {
 		return err

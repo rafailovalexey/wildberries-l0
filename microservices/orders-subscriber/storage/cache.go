@@ -6,9 +6,10 @@ import (
 )
 
 type CacheInterface interface {
-	Set(key string, value interface{}, ttl time.Duration)
-	Get(key string) (interface{}, bool)
-	Delete(key string)
+	Set(string, interface{}, time.Duration)
+	Get(string) (interface{}, bool)
+	ForEach(func(key string, value interface{}))
+	Delete(string)
 	Clear()
 }
 
@@ -48,8 +49,8 @@ func (c *Cache) Set(key string, value interface{}, ttl time.Duration) {
 }
 
 func (c *Cache) Get(key string) (interface{}, bool) {
-	c.mutex.RLock()
-	defer c.mutex.RUnlock()
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
 
 	item, found := c.items[key]
 
@@ -64,6 +65,21 @@ func (c *Cache) Get(key string) (interface{}, bool) {
 	}
 
 	return item.Data, true
+}
+
+func (c *Cache) ForEach(callback func(key string, value interface{})) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	for key, item := range c.items {
+		if time.Now().After(item.Expires) {
+			delete(c.items, key)
+
+			continue
+		}
+
+		callback(key, item.Data)
+	}
 }
 
 func (c *Cache) Delete(key string) {
