@@ -26,12 +26,12 @@ func (s *Service) PublishOrders(sc stan.Conn, subject string) {
 		"test@gmail.com",
 	)
 	payment := dto.ConstructorOrderPaymentDto(
-		"b563feb7b2b84b6test",
+		uuid.New().String(),
 		"1",
 		"USD",
 		"wbpay",
 		1817,
-		1637907727,
+		int64(time.Now().Nanosecond()),
 		"alpha",
 		1500,
 		317,
@@ -41,7 +41,7 @@ func (s *Service) PublishOrders(sc stan.Conn, subject string) {
 		9934930,
 		"WBILMTESTTRACK",
 		453,
-		"ab4219087a764ae0btest",
+		uuid.New().String(),
 		"Mascaras",
 		30,
 		"0",
@@ -68,7 +68,7 @@ func (s *Service) PublishOrders(sc stan.Conn, subject string) {
 			"meest",
 			"9",
 			99,
-			time.Now().String(),
+			int64(time.Now().Nanosecond()),
 			"1",
 		)
 

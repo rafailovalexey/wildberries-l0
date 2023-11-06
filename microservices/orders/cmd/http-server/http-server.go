@@ -41,6 +41,6 @@ func Run() {
 	err := http.ListenAndServe(address, router)
 
 	if err != nil {
-		fmt.Println("ошибка при запуске сервера", err)
+		log.Fatalf("ошибка при запуске сервера: %v", err)
 	}
 }

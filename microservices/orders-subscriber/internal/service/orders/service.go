@@ -25,7 +25,10 @@ func (s *Service) SubscribeOrders(message *stan.Msg) {
 
 	repositoryOrders := &repository.Repository{}
 
-	repositoryOrders.CreateOrder(&data)
+	err = repositoryOrders.CreateOrder(&data)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	fmt.Println()
 }

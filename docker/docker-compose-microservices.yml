@@ -18,7 +18,7 @@ services:
   orders-subscriber:
     container_name: "orders-subscriber"
     hostname: "orders-subscriber"
-    restart: "always"
+#    restart: "always"
     networks:
       - "network"
     env_file:
@@ -30,7 +30,7 @@ services:
   orders-publisher:
     container_name: "orders-publisher"
     hostname: "orders-publisher"
-    restart: "always"
+#    restart: "always"
     networks:
       - "network"
     env_file:

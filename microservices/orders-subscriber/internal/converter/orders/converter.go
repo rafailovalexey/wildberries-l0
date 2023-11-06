@@ -4,6 +4,7 @@ import (
 	"github.com/emptyhopes/orders-subscriber/internal/converter"
 	dto "github.com/emptyhopes/orders-subscriber/internal/dto/orders"
 	model "github.com/emptyhopes/orders-subscriber/internal/model/orders"
+	"time"
 )
 
 type Converter struct{}
@@ -23,7 +24,7 @@ func (c *Converter) MapOrderDtoToOrderModel(dto *dto.OrderDto, deliveryUid strin
 		DeliveryService:   dto.DeliveryService,
 		Shardkey:          dto.Shardkey,
 		SmId:              dto.SmId,
-		DateCreated:       dto.DateCreated,
+		DateCreated:       time.Unix(dto.DateCreated, 0),
 		OofShard:          dto.OofShard,
 	}
 }
@@ -35,7 +36,7 @@ func (c *Converter) MapOrderPaymentDtoToOrderPaymentModel(dto *dto.OrderPaymentD
 		Currency:     dto.Currency,
 		Provider:     dto.Provider,
 		Amount:       dto.Amount,
-		PaymentDt:    dto.PaymentDt,
+		PaymentDt:    time.Unix(dto.PaymentDt, 0),
 		Bank:         dto.Bank,
 		DeliveryCost: dto.DeliveryCost,
 		GoodsTotal:   dto.GoodsTotal,

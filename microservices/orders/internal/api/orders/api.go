@@ -1,7 +1,6 @@
 package orders
 
 import (
-	"fmt"
 	"github.com/emptyhopes/orders/internal/api"
 	service "github.com/emptyhopes/orders/internal/service/orders"
 	"net/http"
@@ -22,18 +21,14 @@ func (a *Api) GetOrderById(response http.ResponseWriter, request *http.Request) 
 
 	id := segments[3]
 
-	fmt.Println(id)
-
 	orderService := &service.Service{}
 
-	result, err := orderService.GetOrderById(id)
+	_, err := orderService.GetOrderById(id)
 
 	if err != nil {
 		http.Error(response, "ошибка при получение заказа", http.StatusBadRequest)
 		return
 	}
-
-	fmt.Println(result)
 }
 
 /*

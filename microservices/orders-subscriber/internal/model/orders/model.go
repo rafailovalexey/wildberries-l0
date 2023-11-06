@@ -1,5 +1,7 @@
 package orders
 
+import "time"
+
 type OrderModel struct {
 	OrderUid          string
 	TrackNumber       string
@@ -12,7 +14,7 @@ type OrderModel struct {
 	DeliveryService   string
 	Shardkey          string
 	SmId              int
-	DateCreated       string
+	DateCreated       time.Time
 	OofShard          string
 }
 
@@ -34,7 +36,7 @@ type OrderPaymentModel struct {
 	Currency     string
 	Provider     string
 	Amount       int
-	PaymentDt    int
+	PaymentDt    time.Time
 	Bank         string
 	DeliveryCost int
 	GoodsTotal   int

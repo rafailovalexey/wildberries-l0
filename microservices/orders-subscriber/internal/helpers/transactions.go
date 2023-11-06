@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"context"
+	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"sync"
@@ -49,4 +50,11 @@ func (t *Transactions) QueryRow(ctx context.Context, sql string, args ...interfa
 	defer t.mutex.Unlock()
 
 	return t.transactions.QueryRow(ctx, sql, args...)
+}
+
+func (t *Transactions) Exec(ctx context.Context, sql string, args ...interface{}) (pgconn.CommandTag, error) {
+	t.mutex.Lock()
+	defer t.mutex.Unlock()
+
+	return t.transactions.Exec(ctx, sql, args...)
 }

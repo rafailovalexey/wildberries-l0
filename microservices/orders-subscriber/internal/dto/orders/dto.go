@@ -13,7 +13,7 @@ type OrderDto struct {
 	DeliveryService   string            `json:"delivery_service"`
 	Shardkey          string            `json:"shardkey"`
 	SmId              int               `json:"sm_id"`
-	DateCreated       string            `json:"date_created"`
+	DateCreated       int64             `json:"date_created"`
 	OofShard          string            `json:"oof_shard"`
 }
 
@@ -33,7 +33,7 @@ type OrderPaymentDto struct {
 	Currency     string `json:"currency"`
 	Provider     string `json:"provider"`
 	Amount       int    `json:"amount"`
-	PaymentDt    int    `json:"payment_dt"`
+	PaymentDt    int64  `json:"payment_dt"`
 	Bank         string `json:"bank"`
 	DeliveryCost int    `json:"delivery_cost"`
 	GoodsTotal   int    `json:"goods_total"`
@@ -67,7 +67,7 @@ func ConstructorOrderDto(
 	DeliveryService string,
 	Shardkey string,
 	SmId int,
-	DateCreated string,
+	DateCreated int64,
 	OofShard string,
 ) *OrderDto {
 	result := &OrderDto{
@@ -118,7 +118,7 @@ func ConstructorOrderPaymentDto(
 	Currency string,
 	Provider string,
 	Amount int,
-	PaymentDt int,
+	PaymentDt int64,
 	Bank string,
 	DeliveryCost int,
 	GoodsTotal int,
