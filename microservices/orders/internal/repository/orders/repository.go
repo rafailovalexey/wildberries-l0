@@ -61,7 +61,7 @@ func (r *Repository) GetOrderById(orderUid string) (*dto.OrderDto, error) {
 }
 
 func (r *Repository) getOrder(pool *pgxpool.Pool, orderUid string) (*model.OrderModel, error) {
-	var order *model.OrderModel
+	var order model.OrderModel
 
 	query := `
         SELECT * FROM orders WHERE order_uid = $1
@@ -71,17 +71,17 @@ func (r *Repository) getOrder(pool *pgxpool.Pool, orderUid string) (*model.Order
 		context.Background(),
 		query,
 		orderUid,
-	).Scan(order)
+	).Scan(&order)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return order, nil
+	return &order, nil
 }
 
 func (r *Repository) getOrderPayment(pool *pgxpool.Pool, paymentUid string) (*model.OrderPaymentModel, error) {
-	var payment *model.OrderPaymentModel
+	var payment model.OrderPaymentModel
 
 	query := `
         SELECT * FROM orders_payment WHERE payment_uid = $1
@@ -91,17 +91,17 @@ func (r *Repository) getOrderPayment(pool *pgxpool.Pool, paymentUid string) (*mo
 		context.Background(),
 		query,
 		paymentUid,
-	).Scan(payment)
+	).Scan(&payment)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return payment, nil
+	return &payment, nil
 }
 
 func (r *Repository) getOrderDelivery(pool *pgxpool.Pool, deliveryUid string) (*model.OrderDeliveryModel, error) {
-	var delivery *model.OrderDeliveryModel
+	var delivery model.OrderDeliveryModel
 
 	query := `
         SELECT * FROM orders_delivery WHERE delivery_uid = $1
@@ -111,13 +111,13 @@ func (r *Repository) getOrderDelivery(pool *pgxpool.Pool, deliveryUid string) (*
 		context.Background(),
 		query,
 		deliveryUid,
-	).Scan(delivery)
+	).Scan(&delivery)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return delivery, nil
+	return &delivery, nil
 }
 
 func (r *Repository) getOrderItems(pool *pgxpool.Pool, orderUid string) (*[]model.OrderItemModel, error) {
