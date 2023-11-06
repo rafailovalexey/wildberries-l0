@@ -58,7 +58,6 @@ func (c *Converter) MapOrderDeliveryDtoToOrderDeliveryModel(dto *dto.OrderDelive
 
 func (c *Converter) MapOrderItemDtoToOrderItemModel(dto *dto.OrderItemDto, orderUid string) *model.OrderItemModel {
 	return &model.OrderItemModel{
-		ChrtId:      dto.ChrtId,
 		TrackNumber: dto.TrackNumber,
 		Price:       dto.Price,
 		Rid:         dto.Rid,

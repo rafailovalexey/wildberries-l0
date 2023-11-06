@@ -141,7 +141,6 @@ func ConstructorOrderPaymentDto(
 }
 
 func ConstructorOrderItemDto(
-	ChrtId int,
 	TrackNumber string,
 	Price int,
 	Rid string,
@@ -154,7 +153,6 @@ func ConstructorOrderItemDto(
 	Status int,
 ) *OrderItemDto {
 	result := &OrderItemDto{
-		ChrtId:      ChrtId,
 		TrackNumber: TrackNumber,
 		Price:       Price,
 		Rid:         Rid,

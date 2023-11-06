@@ -41,7 +41,6 @@ type OrderPaymentDto struct {
 }
 
 type OrderItemDto struct {
-	ChrtId      int    `json:"chrt_id"`
 	TrackNumber string `json:"track_number"`
 	Price       int    `json:"price"`
 	Rid         string `json:"rid"`
@@ -91,6 +90,7 @@ func ConstructorOrderDto(
 }
 
 func ConstructorOrderDeliveryDto(
+	DeliveryUid string,
 	Name string,
 	Phone string,
 	Zip string,
@@ -141,7 +141,6 @@ func ConstructorOrderPaymentDto(
 }
 
 func ConstructorOrderItemDto(
-	ChrtId int,
 	TrackNumber string,
 	Price int,
 	Rid string,
@@ -154,7 +153,6 @@ func ConstructorOrderItemDto(
 	Status int,
 ) *OrderItemDto {
 	result := &OrderItemDto{
-		ChrtId:      ChrtId,
 		TrackNumber: TrackNumber,
 		Price:       Price,
 		Rid:         Rid,

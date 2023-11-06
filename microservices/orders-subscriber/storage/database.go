@@ -159,7 +159,7 @@ func (d *Database) CreateOrderPaymentTable(pool *pgxpool.Pool) {
 func (d *Database) CreateOrderItems(pool *pgxpool.Pool) {
 	query := `
 	CREATE TABLE IF NOT EXISTS orders_items (
-		chrt_id INT PRIMARY KEY,
+		chrt_id SERIAL PRIMARY KEY,
 		track_number VARCHAR(255),
 		price INT,
 		rid UUID,

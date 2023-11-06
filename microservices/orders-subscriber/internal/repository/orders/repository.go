@@ -174,15 +174,14 @@ func (r *Repository) insertOrder(transactions *helpers.Transactions, order *mode
 
 func (r *Repository) insertOrderItems(transactions *helpers.Transactions, items *[]model.OrderItemModel) error {
 	query := `
-        INSERT INTO orders_items (chrt_id, track_number, price, rid, name, sale, size, total_price, nm_id, brand, status, order_uid)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        INSERT INTO orders_items (track_number, price, rid, name, sale, size, total_price, nm_id, brand, status, order_uid)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
     `
 
 	for _, item := range *items {
 		_, err := transactions.Exec(
 			context.Background(),
 			query,
-			item.ChrtId,
 			item.TrackNumber,
 			item.Price,
 			item.Rid,

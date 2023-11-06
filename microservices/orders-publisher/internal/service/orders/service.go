@@ -38,7 +38,6 @@ func (s *Service) PublishOrders(sc stan.Conn, subject string) {
 		0,
 	)
 	item1 := dto.ConstructorOrderItemDto(
-		9934930,
 		"WBILMTESTTRACK",
 		453,
 		uuid.New().String(),
