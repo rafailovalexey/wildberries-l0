@@ -159,3 +159,16 @@ func NewOrderItemDto(
 		Status:      Status,
 	}
 }
+
+func NewOrderItemsDto(
+	dtos ...OrderItemDto,
+) *[]OrderItemDto {
+	items := make([]OrderItemDto, 0, 10)
+
+	for _, dto := range dtos {
+
+		items = append(items, dto)
+	}
+
+	return &items
+}

@@ -20,7 +20,7 @@ func NewOrderService(orderRepository repository.OrderRepositoryInterface) *servi
 }
 
 func (s *service) GetOrderById(id string) (*dto.OrderDto, error) {
-	orderCached, isExist := s.orderRepository.GetOrderCache(id)
+	orderCached, isExist := s.orderRepository.GetOrderCacheById(id)
 
 	if isExist {
 		fmt.Printf("пользователь получил данные из кэша по заказу с order_uid: %s\n", orderCached.OrderUid)

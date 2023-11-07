@@ -85,12 +85,12 @@ func (r *repository) GetOrder() *dto.OrderDto {
 		"Vivienne Sabo",
 		202,
 	)
-	items := &[]dto.OrderItemDto{
+	items := dto.NewOrderItemsDto(
 		*item1,
 		*item2,
 		*item3,
 		*item4,
-	}
+	)
 
 	order := dto.NewOrderDto(
 		uuid.New().String(),

@@ -5,7 +5,7 @@ import (
 )
 
 type OrderRepositoryInterface interface {
-	GetOrderCache(string) (*dto.OrderDto, bool)
+	GetOrderCacheById(string) (*dto.OrderDto, bool)
 	SetOrderCache(string, *dto.OrderDto)
 	GetOrderById(string) (*dto.OrderDto, error)
 }

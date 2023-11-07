@@ -33,7 +33,7 @@ func NewOrderRepository(
 	}
 }
 
-func (r *repository) GetOrderCache(id string) (*dto.OrderDto, bool) {
+func (r *repository) GetOrderCacheById(id string) (*dto.OrderDto, bool) {
 	orderCached, isExist := r.cache.Get(id)
 
 	if orderDto, ok := orderCached.(*dto.OrderDto); ok {
