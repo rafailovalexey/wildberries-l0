@@ -25,9 +25,9 @@ func (s *service) HandleOrderMessage(order *dto.OrderDto) {
 	ordersCache := s.orderRepository.GetOrdersCache()
 
 	for _, value := range ordersCache {
-		orderDto, ok := value.Data.(*dto.OrderDto)
+		orderDto, isExist := value.Data.(*dto.OrderDto)
 
-		if !ok {
+		if !isExist {
 			fmt.Printf("ошибка при приведение типа")
 
 			s.orderRepository.DeleteOrderCacheById(orderDto.OrderUid)
