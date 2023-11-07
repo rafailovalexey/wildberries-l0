@@ -6,7 +6,7 @@ import (
 	dto "github.com/emptyhopes/orders-subscriber/internal/dto/orders"
 	"github.com/emptyhopes/orders-subscriber/internal/helpers"
 	model "github.com/emptyhopes/orders-subscriber/internal/model/orders"
-	def "github.com/emptyhopes/orders-subscriber/internal/repository"
+	definition "github.com/emptyhopes/orders-subscriber/internal/repository"
 	"github.com/emptyhopes/orders-subscriber/storage"
 	"sync"
 	"time"
@@ -17,7 +17,7 @@ type repository struct {
 	rwmutex        sync.RWMutex
 }
 
-var _ def.OrdersRepositoryInterface = &repository{}
+var _ definition.OrdersRepositoryInterface = &repository{}
 
 func NewRepository(orderConverter converter.OrdersConverterInterface) *repository {
 	return &repository{
@@ -26,11 +26,11 @@ func NewRepository(orderConverter converter.OrdersConverterInterface) *repositor
 }
 
 func (r *repository) GetOrdersCache() map[string]storage.CacheItem {
-	return def.Cache.GetCache()
+	return definition.Cache.GetCache()
 }
 
 func (r *repository) GetOrderCacheById(id string) (*dto.OrderDto, bool) {
-	orderCached, isExist := def.Cache.Get(id)
+	orderCached, isExist := definition.Cache.Get(id)
 
 	if orderDto, ok := orderCached.(*dto.OrderDto); ok {
 		return orderDto, isExist
@@ -40,18 +40,18 @@ func (r *repository) GetOrderCacheById(id string) (*dto.OrderDto, bool) {
 }
 
 func (r *repository) SetOrderCache(id string, orderDto *dto.OrderDto) {
-	def.Cache.Set(id, orderDto, 5*time.Minute)
+	definition.Cache.Set(id, orderDto, 5*time.Minute)
 }
 
 func (r *repository) DeleteOrderCacheById(id string) {
-	def.Cache.Delete(id)
+	definition.Cache.Delete(id)
 }
 
 func (r *repository) CreateOrder(order *dto.OrderDto) error {
 	r.rwmutex.Lock()
 	defer r.rwmutex.Unlock()
 
-	pool := def.Database.GetPool()
+	pool := definition.Database.GetPool()
 	defer pool.Close()
 
 	transactions, err := helpers.NewTransactions(context.Background(), pool)

@@ -2,14 +2,14 @@ package orders
 
 import (
 	dto "github.com/emptyhopes/orders-publisher/internal/dto/orders"
-	def "github.com/emptyhopes/orders-publisher/internal/repository"
+	definition "github.com/emptyhopes/orders-publisher/internal/repository"
 	"github.com/google/uuid"
 	"time"
 )
 
 type repository struct{}
 
-var _ def.OrdersRepositoryInterface = &repository{}
+var _ definition.OrdersRepositoryInterface = &repository{}
 
 func NewRepository() *repository {
 	return &repository{}

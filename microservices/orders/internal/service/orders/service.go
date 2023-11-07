@@ -4,14 +4,14 @@ import (
 	"fmt"
 	dto "github.com/emptyhopes/orders/internal/dto/orders"
 	"github.com/emptyhopes/orders/internal/repository"
-	def "github.com/emptyhopes/orders/internal/service"
+	definition "github.com/emptyhopes/orders/internal/service"
 )
 
 type service struct {
 	orderRepository repository.OrdersRepositoryInterface
 }
 
-var _ def.OrdersServiceInterface = &service{}
+var _ definition.OrdersServiceInterface = &service{}
 
 func NewService(orderRepository repository.OrdersRepositoryInterface) *service {
 	return &service{

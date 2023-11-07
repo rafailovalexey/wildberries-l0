@@ -1,7 +1,7 @@
 package orders
 
 import (
-	def "github.com/emptyhopes/orders-publisher/internal/controller"
+	definition "github.com/emptyhopes/orders-publisher/internal/controller"
 	"github.com/emptyhopes/orders-publisher/internal/service"
 	"github.com/nats-io/stan.go"
 	"time"
@@ -11,7 +11,7 @@ type controller struct {
 	orderService service.OrdersServiceInterface
 }
 
-var _ def.OrderControllerInterface = &controller{}
+var _ definition.OrderControllerInterface = &controller{}
 
 func NewController(orderService service.OrdersServiceInterface) *controller {
 	return &controller{

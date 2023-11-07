@@ -3,7 +3,7 @@ package orders
 import (
 	"encoding/json"
 	"fmt"
-	def "github.com/emptyhopes/orders-subscriber/internal/controller"
+	definition "github.com/emptyhopes/orders-subscriber/internal/controller"
 	dto "github.com/emptyhopes/orders-subscriber/internal/dto/orders"
 	"github.com/emptyhopes/orders-subscriber/internal/service"
 	"github.com/nats-io/stan.go"
@@ -13,7 +13,7 @@ type controller struct {
 	orderService service.OrdersServiceInterface
 }
 
-var _ def.OrdersControllerInterface = &controller{}
+var _ definition.OrdersControllerInterface = &controller{}
 
 func NewController(orderService service.OrdersServiceInterface) *controller {
 	return &controller{

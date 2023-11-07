@@ -3,7 +3,7 @@ package orders
 import (
 	"encoding/json"
 	"fmt"
-	def "github.com/emptyhopes/orders/internal/api"
+	definition "github.com/emptyhopes/orders/internal/api"
 	"github.com/emptyhopes/orders/internal/service"
 	"net/http"
 	"strings"
@@ -13,7 +13,7 @@ type api struct {
 	orderService service.OrdersServiceInterface
 }
 
-var _ def.OrdersApiInterface = &api{}
+var _ definition.OrdersApiInterface = &api{}
 
 func NewApi(orderService service.OrdersServiceInterface) *api {
 	return &api{

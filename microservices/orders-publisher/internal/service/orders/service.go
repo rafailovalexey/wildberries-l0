@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/emptyhopes/orders-publisher/internal/repository"
-	def "github.com/emptyhopes/orders-publisher/internal/service"
+	definition "github.com/emptyhopes/orders-publisher/internal/service"
 	"github.com/nats-io/stan.go"
 	"log"
 )
@@ -13,7 +13,7 @@ type service struct {
 	orderRepository repository.OrdersRepositoryInterface
 }
 
-var _ def.OrdersServiceInterface = &service{}
+var _ definition.OrdersServiceInterface = &service{}
 
 func NewService(orderRepository repository.OrdersRepositoryInterface) *service {
 	return &service{

@@ -1,7 +1,7 @@
 package orders
 
 import (
-	def "github.com/emptyhopes/orders-subscriber/internal/converter"
+	definition "github.com/emptyhopes/orders-subscriber/internal/converter"
 	dto "github.com/emptyhopes/orders-subscriber/internal/dto/orders"
 	model "github.com/emptyhopes/orders-subscriber/internal/model/orders"
 	"time"
@@ -9,7 +9,7 @@ import (
 
 type converter struct{}
 
-var _ def.OrdersConverterInterface = &converter{}
+var _ definition.OrdersConverterInterface = &converter{}
 
 func NewConverter() *converter {
 	return &converter{}
