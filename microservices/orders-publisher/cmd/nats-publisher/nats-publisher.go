@@ -22,9 +22,11 @@ func Start(orderController controller.OrderControllerInterface) {
 	}
 
 	sc, err := stan.Connect(cluster, "publisher-1", stan.NatsURL(url))
+
 	if err != nil {
 		log.Fatalf("ошибка %v\n", err)
 	}
+
 	defer sc.Close()
 
 	for {
