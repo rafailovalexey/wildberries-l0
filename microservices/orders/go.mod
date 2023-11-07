@@ -3,6 +3,7 @@ module github.com/emptyhopes/orders
 go 1.19
 
 require (
+	github.com/google/uuid v1.4.0
 	github.com/jackc/pgx/v4 v4.18.1
 	github.com/joho/godotenv v1.5.1
 	github.com/stretchr/testify v1.8.1
@@ -11,7 +12,6 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/google/uuid v1.4.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.14.0 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect

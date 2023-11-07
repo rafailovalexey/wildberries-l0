@@ -86,10 +86,10 @@ func (r *repository) GetOrder() *dto.OrderDto {
 		202,
 	)
 	items := dto.NewOrderItemsDto(
-		*item1,
-		*item2,
-		*item3,
-		*item4,
+		item1,
+		item2,
+		item3,
+		item4,
 	)
 
 	order := dto.NewOrderDto(

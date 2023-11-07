@@ -1,9 +1,5 @@
 package orders
 
-import (
-	definition "github.com/emptyhopes/orders/internal/dto"
-)
-
 type OrderDto struct {
 	OrderUid          string            `json:"order_uid"`
 	TrackNumber       string            `json:"track_number"`
@@ -60,11 +56,7 @@ type OrderItemDto struct {
 
 type OrderItemsDto = []OrderItemDto
 
-type dto struct{}
-
-var _ definition.OrderDtoInterface = (*dto)(nil)
-
-func (d *dto) NewOrderDto(
+func NewOrderDto(
 	OrderUid string,
 	TrackNumber string,
 	Entry string,
@@ -98,7 +90,7 @@ func (d *dto) NewOrderDto(
 	}
 }
 
-func (d *dto) NewOrderDeliveryDto(
+func NewOrderDeliveryDto(
 	Name string,
 	Phone string,
 	Zip string,
@@ -118,7 +110,7 @@ func (d *dto) NewOrderDeliveryDto(
 	}
 }
 
-func (d *dto) NewOrderPaymentDto(
+func NewOrderPaymentDto(
 	Transaction string,
 	RequestId string,
 	Currency string,
@@ -144,7 +136,7 @@ func (d *dto) NewOrderPaymentDto(
 	}
 }
 
-func (d *dto) NewOrderItemDto(
+func NewOrderItemDto(
 	TrackNumber string,
 	Price int,
 	Rid string,
@@ -170,7 +162,7 @@ func (d *dto) NewOrderItemDto(
 	}
 }
 
-func (d *dto) NewOrderItemsDto(
+func NewOrderItemsDto(
 	dtos ...*OrderItemDto,
 ) *OrderItemsDto {
 	items := make(OrderItemsDto, 0, 10)

@@ -1,9 +1,9 @@
 package converter
 
 import (
-	mockConverter "github.com/emptyhopes/orders/internal/converter/mocks"
-	dto "github.com/emptyhopes/orders/internal/dto/orders"
-	model "github.com/emptyhopes/orders/internal/model/orders"
+	mockConverter "github.com/emptyhopes/orders_subscriber/internal/converter/mocks"
+	dto "github.com/emptyhopes/orders_subscriber/internal/dto/orders"
+	model "github.com/emptyhopes/orders_subscriber/internal/model/orders"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"

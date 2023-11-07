@@ -1,7 +1,6 @@
 package orders
 
 import (
-	definition "github.com/emptyhopes/orders/internal/model"
 	"time"
 )
 
@@ -63,11 +62,7 @@ type OrderItemModel struct {
 
 type OrderItemsModel = []OrderItemModel
 
-type model struct{}
-
-var _ definition.OrderModelInterface = (*model)(nil)
-
-func (m *model) NewOrderModel(
+func NewOrderModel(
 	orderUid string,
 	trackNumber string,
 	entry string,
@@ -99,7 +94,7 @@ func (m *model) NewOrderModel(
 	}
 }
 
-func (m *model) NewOrderDeliveryModel(
+func NewOrderDeliveryModel(
 	deliveryUid string,
 	name string,
 	phone string,
@@ -121,7 +116,7 @@ func (m *model) NewOrderDeliveryModel(
 	}
 }
 
-func (m *model) NewOrderPaymentModel(
+func NewOrderPaymentModel(
 	paymentUid string,
 	transaction string,
 	requestId string,
@@ -149,7 +144,7 @@ func (m *model) NewOrderPaymentModel(
 	}
 }
 
-func (m *model) NewOrderItemModel(
+func NewOrderItemModel(
 	chrtId int,
 	trackNumber string,
 	price int,
@@ -179,7 +174,7 @@ func (m *model) NewOrderItemModel(
 	}
 }
 
-func (m *model) NewOrderItemsModel(
+func NewOrderItemsModel(
 	models ...*OrderItemModel,
 ) *OrderItemsModel {
 	items := make(OrderItemsModel, 0, 10)
