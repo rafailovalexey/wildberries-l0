@@ -19,7 +19,7 @@ type repository struct {
 	rwmutex        sync.RWMutex
 }
 
-var _ definition.OrderRepositoryInterface = &repository{}
+var _ definition.OrderRepositoryInterface = (*repository)(nil)
 
 func NewOrderRepository(
 	orderConverter converter.OrderConverterInterface,

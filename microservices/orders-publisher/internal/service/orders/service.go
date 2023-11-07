@@ -13,7 +13,7 @@ type service struct {
 	orderRepository repository.OrderRepositoryInterface
 }
 
-var _ definition.OrderServiceInterface = &service{}
+var _ definition.OrderServiceInterface = (*service)(nil)
 
 func NewOrderService(orderRepository repository.OrderRepositoryInterface) *service {
 	return &service{

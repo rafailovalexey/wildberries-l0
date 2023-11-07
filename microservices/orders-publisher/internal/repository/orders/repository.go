@@ -9,7 +9,7 @@ import (
 
 type repository struct{}
 
-var _ definition.OrderRepositoryInterface = &repository{}
+var _ definition.OrderRepositoryInterface = (*repository)(nil)
 
 func NewOrderRepository() *repository {
 	return &repository{}

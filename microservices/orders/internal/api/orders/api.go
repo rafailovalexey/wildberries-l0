@@ -13,7 +13,7 @@ type api struct {
 	orderService service.OrderServiceInterface
 }
 
-var _ definition.OrderApiInterface = &api{}
+var _ definition.OrderApiInterface = (*api)(nil)
 
 func NewOrderApi(orderService service.OrderServiceInterface) *api {
 	return &api{

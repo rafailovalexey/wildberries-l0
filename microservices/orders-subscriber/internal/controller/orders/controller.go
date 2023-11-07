@@ -13,7 +13,7 @@ type controller struct {
 	orderService service.OrderServiceInterface
 }
 
-var _ definition.OrderControllerInterface = &controller{}
+var _ definition.OrderControllerInterface = (*controller)(nil)
 
 func NewOrderController(orderService service.OrderServiceInterface) *controller {
 	return &controller{

@@ -9,7 +9,7 @@ import (
 
 type converter struct{}
 
-var _ definition.OrderConverterInterface = &converter{}
+var _ definition.OrderConverterInterface = (*converter)(nil)
 
 func NewOrderConverter() *converter {
 	return &converter{}
