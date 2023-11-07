@@ -6,24 +6,28 @@ import (
 	dto "github.com/emptyhopes/orders-subscriber/internal/dto/orders"
 	"github.com/emptyhopes/orders-subscriber/internal/helpers"
 	model "github.com/emptyhopes/orders-subscriber/internal/model/orders"
-	"github.com/emptyhopes/orders-subscriber/internal/repository"
+	def "github.com/emptyhopes/orders-subscriber/internal/repository"
 	"github.com/emptyhopes/orders-subscriber/storage"
 	"sync"
 	"time"
 )
 
-type Repository struct {
+type repository struct {
 	rwmutex sync.RWMutex
 }
 
-var _ repository.OrdersRepositoryInterface = &Repository{}
+var _ def.OrdersRepositoryInterface = &repository{}
 
-func (r *Repository) GetOrdersCache() map[string]storage.CacheItem {
-	return repository.Cache.GetCache()
+func NewRepository() *repository {
+	return &repository{}
 }
 
-func (r *Repository) GetOrderCacheById(id string) (*dto.OrderDto, bool) {
-	orderCached, isExist := repository.Cache.Get(id)
+func (r *repository) GetOrdersCache() map[string]storage.CacheItem {
+	return def.Cache.GetCache()
+}
+
+func (r *repository) GetOrderCacheById(id string) (*dto.OrderDto, bool) {
+	orderCached, isExist := def.Cache.Get(id)
 
 	if orderDto, ok := orderCached.(*dto.OrderDto); ok {
 		return orderDto, isExist
@@ -32,22 +36,22 @@ func (r *Repository) GetOrderCacheById(id string) (*dto.OrderDto, bool) {
 	return nil, false
 }
 
-func (r *Repository) SetOrderCache(id string, orderDto *dto.OrderDto) {
-	repository.Cache.Set(id, orderDto, 5*time.Minute)
+func (r *repository) SetOrderCache(id string, orderDto *dto.OrderDto) {
+	def.Cache.Set(id, orderDto, 5*time.Minute)
 }
 
-func (r *Repository) DeleteOrderCacheById(id string) {
-	repository.Cache.Delete(id)
+func (r *repository) DeleteOrderCacheById(id string) {
+	def.Cache.Delete(id)
 }
 
-func (r *Repository) CreateOrder(order *dto.OrderDto) error {
+func (r *repository) CreateOrder(order *dto.OrderDto) error {
 	r.rwmutex.Lock()
 	defer r.rwmutex.Unlock()
 
-	pool := repository.Database.GetPool()
+	pool := def.Database.GetPool()
 	defer pool.Close()
 
-	converterOrders := &converter.Converter{}
+	converterOrders := converter.NewConverter()
 
 	transactions, err := helpers.NewTransactions(context.Background(), pool)
 	if err != nil {
@@ -85,7 +89,7 @@ func (r *Repository) CreateOrder(order *dto.OrderDto) error {
 	return nil
 }
 
-func (r *Repository) insertOrderPayment(transactions *helpers.Transactions, payment *model.OrderPaymentModel) (string, error) {
+func (r *repository) insertOrderPayment(transactions *helpers.Transactions, payment *model.OrderPaymentModel) (string, error) {
 	var paymentUid string
 
 	query := `
@@ -116,7 +120,7 @@ func (r *Repository) insertOrderPayment(transactions *helpers.Transactions, paym
 	return paymentUid, nil
 }
 
-func (r *Repository) insertOrderDelivery(transactions *helpers.Transactions, delivery *model.OrderDeliveryModel) (string, error) {
+func (r *repository) insertOrderDelivery(transactions *helpers.Transactions, delivery *model.OrderDeliveryModel) (string, error) {
 	var deliveryUid string
 
 	query := `
@@ -144,7 +148,7 @@ func (r *Repository) insertOrderDelivery(transactions *helpers.Transactions, del
 	return deliveryUid, nil
 }
 
-func (r *Repository) insertOrder(transactions *helpers.Transactions, order *model.OrderModel) error {
+func (r *repository) insertOrder(transactions *helpers.Transactions, order *model.OrderModel) error {
 	query := `
         INSERT INTO orders (order_uid, track_number, entry, delivery_uid, payment_uid, locale, internal_signature, customer_id, delivery_service, shardkey, sm_id, date_created, oof_shard)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
@@ -175,7 +179,7 @@ func (r *Repository) insertOrder(transactions *helpers.Transactions, order *mode
 	return nil
 }
 
-func (r *Repository) insertOrderItems(transactions *helpers.Transactions, items *[]model.OrderItemModel) error {
+func (r *repository) insertOrderItems(transactions *helpers.Transactions, items *[]model.OrderItemModel) error {
 	query := `
         INSERT INTO orders_items (track_number, price, rid, name, sale, size, total_price, nm_id, brand, status, order_uid)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)

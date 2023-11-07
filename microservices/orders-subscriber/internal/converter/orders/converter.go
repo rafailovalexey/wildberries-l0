@@ -1,9 +1,9 @@
 package orders
 
 import (
-	def "github.com/emptyhopes/orders/internal/converter"
-	dto "github.com/emptyhopes/orders/internal/dto/orders"
-	model "github.com/emptyhopes/orders/internal/model/orders"
+	def "github.com/emptyhopes/orders-subscriber/internal/converter"
+	dto "github.com/emptyhopes/orders-subscriber/internal/dto/orders"
+	model "github.com/emptyhopes/orders-subscriber/internal/model/orders"
 	"time"
 )
 

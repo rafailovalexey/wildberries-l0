@@ -6,19 +6,20 @@ import (
 )
 
 type CacheInterface interface {
-	Set(key string, value interface{}, ttl time.Duration)
-	Get(key string) (interface{}, bool)
-	Delete(key string)
+	GetCache() map[string]CacheItem
+	Get(string) (interface{}, bool)
+	Set(string, interface{}, time.Duration)
+	Delete(string)
 	Clear()
 }
 
-type cacheItem struct {
+type CacheItem struct {
 	Data    interface{}
 	Expires time.Time
 }
 
 type cache struct {
-	items map[string]cacheItem
+	items map[string]CacheItem
 	mutex sync.RWMutex
 	ttl   time.Duration
 }
@@ -27,33 +28,23 @@ var _ CacheInterface = &cache{}
 
 func NewCache() *cache {
 	cache := &cache{
-		items: make(map[string]cacheItem),
+		items: make(map[string]CacheItem),
 	}
 
 	return cache
 }
 
-func (c *cache) Set(key string, value interface{}, ttl time.Duration) {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-
-	expires := time.Now().Add(ttl)
-
-	item := cacheItem{
-		Data:    value,
-		Expires: expires,
-	}
-
-	c.items[key] = item
+func (c *cache) GetCache() map[string]CacheItem {
+	return c.items
 }
 
 func (c *cache) Get(key string) (interface{}, bool) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 
-	item, found := c.items[key]
+	item, isExist := c.items[key]
 
-	if !found {
+	if !isExist {
 		return nil, false
 	}
 
@@ -64,6 +55,20 @@ func (c *cache) Get(key string) (interface{}, bool) {
 	}
 
 	return item.Data, true
+}
+
+func (c *cache) Set(key string, value interface{}, ttl time.Duration) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	expires := time.Now().Add(ttl)
+
+	item := CacheItem{
+		Data:    value,
+		Expires: expires,
+	}
+
+	c.items[key] = item
 }
 
 func (c *cache) Delete(key string) {
@@ -77,5 +82,5 @@ func (c *cache) Clear() {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	c.items = make(map[string]cacheItem)
+	c.items = make(map[string]CacheItem)
 }

@@ -1,32 +1,24 @@
 package orders
 
 import (
-	"encoding/json"
 	"fmt"
 	dto "github.com/emptyhopes/orders-subscriber/internal/dto/orders"
 	repository "github.com/emptyhopes/orders-subscriber/internal/repository/orders"
-	"github.com/emptyhopes/orders-subscriber/internal/service"
-	"github.com/nats-io/stan.go"
+	def "github.com/emptyhopes/orders-subscriber/internal/service"
 )
 
-type Service struct{}
+type service struct{}
 
-var _ service.OrdersServiceInterface = &Service{}
+var _ def.OrdersServiceInterface = &service{}
 
-func (s *Service) SubscribeOrders(message *stan.Msg) {
-	var data dto.OrderDto
+func NewService() *service {
+	return &service{}
+}
 
-	err := json.Unmarshal(message.Data, &data)
+func (s *service) HandleOrderMessage(order *dto.OrderDto) {
+	repositoryOrders := repository.NewRepository()
 
-	if err != nil {
-		fmt.Printf("произошла ошибка парсинга %v\n", err)
-
-		return
-	}
-
-	repositoryOrders := &repository.Repository{}
-
-	repositoryOrders.SetOrderCache(data.OrderUid, &data)
+	repositoryOrders.SetOrderCache(order.OrderUid, order)
 
 	ordersCache := repositoryOrders.GetOrdersCache()
 
@@ -41,7 +33,7 @@ func (s *Service) SubscribeOrders(message *stan.Msg) {
 			return
 		}
 
-		err = repositoryOrders.CreateOrder(orderDto)
+		err := repositoryOrders.CreateOrder(orderDto)
 
 		if err != nil {
 			fmt.Printf("ошибка при создание заказа %v\n", err)
@@ -49,10 +41,10 @@ func (s *Service) SubscribeOrders(message *stan.Msg) {
 			return
 		}
 
-		fmt.Printf("обработал сообщение с order_uid: %s\n", data.OrderUid)
+		fmt.Printf("обработал сообщение с order_uid: %s\n", order.OrderUid)
 
 		repositoryOrders.DeleteOrderCacheById(orderDto.OrderUid)
 
-		fmt.Printf("очистил кэш для order_uid: %s\n", data.OrderUid)
+		fmt.Printf("очистил кэш для order_uid: %s\n", order.OrderUid)
 	}
 }

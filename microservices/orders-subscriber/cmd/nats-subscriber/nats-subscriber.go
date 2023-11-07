@@ -2,7 +2,7 @@ package nats_subscriber
 
 import (
 	"fmt"
-	service "github.com/emptyhopes/orders-subscriber/internal/service/orders"
+	controller "github.com/emptyhopes/orders-subscriber/internal/controller/orders"
 	"github.com/nats-io/stan.go"
 	"log"
 	"os"
@@ -11,6 +11,16 @@ import (
 )
 
 func Start() {
+	sc := Connect()
+
+	defer sc.Close()
+
+	orderController := controller.NewController()
+
+	Subscribe(sc, "orders", "orders", orderController.HandleOrderMessage)
+}
+
+func Connect() stan.Conn {
 	url := os.Getenv("NATS_URL")
 
 	if url == "" {
@@ -29,11 +39,7 @@ func Start() {
 		log.Fatalf("ошибка %v\n", err)
 	}
 
-	defer sc.Close()
-
-	serviceOrders := &service.Service{}
-
-	Subscribe(sc, "orders", "orders", serviceOrders.SubscribeOrders)
+	return sc
 }
 
 func Subscribe(sc stan.Conn, subject string, queue string, handler stan.MsgHandler) {

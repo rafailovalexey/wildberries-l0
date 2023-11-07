@@ -1,9 +1,9 @@
 package service
 
 import (
-	"github.com/nats-io/stan.go"
+	dto "github.com/emptyhopes/orders-subscriber/internal/dto/orders"
 )
 
 type OrdersServiceInterface interface {
-	SubscribeOrders(message *stan.Msg)
+	HandleOrderMessage(*dto.OrderDto)
 }
