@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"fmt"
 	httpServer "github.com/emptyhopes/orders/cmd/http-server"
 	"github.com/emptyhopes/orders/internal/provider"
 	orderProvider "github.com/emptyhopes/orders/internal/provider/orders"
@@ -58,5 +59,9 @@ func (a *Application) initializeProvider(_ context.Context) error {
 }
 
 func (a *Application) Run() {
-	httpServer.Run(a.orderProvider.GetOrderApi())
+	api := a.orderProvider.GetOrderApi()
+
+	fmt.Println(api)
+
+	httpServer.Run(api)
 }
