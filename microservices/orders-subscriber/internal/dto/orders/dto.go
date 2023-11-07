@@ -54,7 +54,7 @@ type OrderItemDto struct {
 	Status      int    `json:"status"`
 }
 
-func ConstructorOrderDto(
+func NewOrderDto(
 	OrderUid string,
 	TrackNumber string,
 	Entry string,
@@ -70,7 +70,7 @@ func ConstructorOrderDto(
 	DateCreated int64,
 	OofShard string,
 ) *OrderDto {
-	result := &OrderDto{
+	return &OrderDto{
 		OrderUid:          OrderUid,
 		TrackNumber:       TrackNumber,
 		Entry:             Entry,
@@ -86,11 +86,9 @@ func ConstructorOrderDto(
 		DateCreated:       DateCreated,
 		OofShard:          OofShard,
 	}
-
-	return result
 }
 
-func ConstructorOrderDeliveryDto(
+func NewOrderDeliveryDto(
 	Name string,
 	Phone string,
 	Zip string,
@@ -99,7 +97,7 @@ func ConstructorOrderDeliveryDto(
 	Region string,
 	Email string,
 ) *OrderDeliveryDto {
-	result := &OrderDeliveryDto{
+	return &OrderDeliveryDto{
 		Name:    Name,
 		Phone:   Phone,
 		Zip:     Zip,
@@ -108,11 +106,9 @@ func ConstructorOrderDeliveryDto(
 		Region:  Region,
 		Email:   Email,
 	}
-
-	return result
 }
 
-func ConstructorOrderPaymentDto(
+func NewOrderPaymentDto(
 	Transaction string,
 	RequestId string,
 	Currency string,
@@ -124,7 +120,7 @@ func ConstructorOrderPaymentDto(
 	GoodsTotal int,
 	CustomFee int,
 ) *OrderPaymentDto {
-	result := &OrderPaymentDto{
+	return &OrderPaymentDto{
 		Transaction:  Transaction,
 		RequestId:    RequestId,
 		Currency:     Currency,
@@ -136,11 +132,9 @@ func ConstructorOrderPaymentDto(
 		GoodsTotal:   GoodsTotal,
 		CustomFee:    CustomFee,
 	}
-
-	return result
 }
 
-func ConstructorOrderItemDto(
+func NewOrderItemDto(
 	TrackNumber string,
 	Price int,
 	Rid string,
@@ -152,7 +146,7 @@ func ConstructorOrderItemDto(
 	Brand string,
 	Status int,
 ) *OrderItemDto {
-	result := &OrderItemDto{
+	return &OrderItemDto{
 		TrackNumber: TrackNumber,
 		Price:       Price,
 		Rid:         Rid,
@@ -164,6 +158,4 @@ func ConstructorOrderItemDto(
 		Brand:       Brand,
 		Status:      Status,
 	}
-
-	return result
 }

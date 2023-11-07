@@ -5,6 +5,6 @@ import (
 )
 
 type OrdersApiInterface interface {
-	GetOrderById(http.ResponseWriter, *http.Request)
 	OrdersHandler(http.ResponseWriter, *http.Request)
+	GetOrderById(http.ResponseWriter, *http.Request)
 }

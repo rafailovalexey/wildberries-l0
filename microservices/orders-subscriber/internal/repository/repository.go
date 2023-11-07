@@ -5,8 +5,8 @@ import (
 	"github.com/emptyhopes/orders-subscriber/storage"
 )
 
-var Cache = storage.ConstructorCache()
-var Database = storage.ConstructorDatabase()
+var Cache = storage.NewCache()
+var Database = storage.NewDatabase()
 
 func init() {
 	Database.Initialize()

@@ -6,45 +6,54 @@ import (
 )
 
 type CacheInterface interface {
-	GetCache() map[string]CacheItem
-	Get(string) (interface{}, bool)
-	Set(string, interface{}, time.Duration)
-	Delete(string)
+	Set(key string, value interface{}, ttl time.Duration)
+	Get(key string) (interface{}, bool)
+	Delete(key string)
 	Clear()
 }
 
-type CacheItem struct {
+type cacheItem struct {
 	Data    interface{}
 	Expires time.Time
 }
 
-type Cache struct {
-	items map[string]CacheItem
+type cache struct {
+	items map[string]cacheItem
 	mutex sync.RWMutex
 	ttl   time.Duration
 }
 
-var _ CacheInterface = &Cache{}
+var _ CacheInterface = &cache{}
 
-func ConstructorCache() *Cache {
-	cache := &Cache{
-		items: make(map[string]CacheItem),
+func NewCache() *cache {
+	cache := &cache{
+		items: make(map[string]cacheItem),
 	}
 
 	return cache
 }
 
-func (c *Cache) GetCache() map[string]CacheItem {
-	return c.items
-}
-
-func (c *Cache) Get(key string) (interface{}, bool) {
+func (c *cache) Set(key string, value interface{}, ttl time.Duration) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	item, isExist := c.items[key]
+	expires := time.Now().Add(ttl)
 
-	if !isExist {
+	item := cacheItem{
+		Data:    value,
+		Expires: expires,
+	}
+
+	c.items[key] = item
+}
+
+func (c *cache) Get(key string) (interface{}, bool) {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+
+	item, found := c.items[key]
+
+	if !found {
 		return nil, false
 	}
 
@@ -57,30 +66,16 @@ func (c *Cache) Get(key string) (interface{}, bool) {
 	return item.Data, true
 }
 
-func (c *Cache) Set(key string, value interface{}, ttl time.Duration) {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-
-	expires := time.Now().Add(ttl)
-
-	item := CacheItem{
-		Data:    value,
-		Expires: expires,
-	}
-
-	c.items[key] = item
-}
-
-func (c *Cache) Delete(key string) {
+func (c *cache) Delete(key string) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
 	delete(c.items, key)
 }
 
-func (c *Cache) Clear() {
+func (c *cache) Clear() {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	c.items = make(map[string]CacheItem)
+	c.items = make(map[string]cacheItem)
 }

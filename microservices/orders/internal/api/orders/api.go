@@ -3,17 +3,38 @@ package orders
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/emptyhopes/orders/internal/api"
+	def "github.com/emptyhopes/orders/internal/api"
 	service "github.com/emptyhopes/orders/internal/service/orders"
 	"net/http"
 	"strings"
 )
 
-type Api struct{}
+type api struct{}
 
-var _ api.OrdersApiInterface = &Api{}
+var _ def.OrdersApiInterface = &api{}
 
-func (a *Api) GetOrderById(response http.ResponseWriter, request *http.Request) {
+/*
+OrdersHandler
+Использовал парсинг URL, для того, чтобы добиться REST поведения
+GetAllOrders - /v1/orders
+GetOrderById - /v1/orders/:id
+*/
+func (a *api) OrdersHandler(response http.ResponseWriter, request *http.Request) {
+	switch request.Method {
+	case http.MethodGet:
+		if strings.HasPrefix(request.URL.Path, "/v1/orders/") {
+			a.GetOrderById(response, request)
+
+			return
+		}
+
+		http.Error(response, "несуществующий URL", http.StatusNotFound)
+	default:
+		http.Error(response, "несуществующий http метод", http.StatusMethodNotAllowed)
+	}
+}
+
+func (a *api) GetOrderById(response http.ResponseWriter, request *http.Request) {
 	segments := strings.Split(request.URL.Path, "/")
 
 	if len(segments) != 4 || segments[1] != "v1" || segments[2] != "orders" {
@@ -57,26 +78,5 @@ func (a *Api) GetOrderById(response http.ResponseWriter, request *http.Request) 
 		http.Error(response, err.Error(), http.StatusInternalServerError)
 
 		return
-	}
-}
-
-/*
-OrdersHandler
-Использовал парсинг URL, для того, чтобы добиться REST поведения
-GetAllOrders - /v1/orders
-GetOrderById - /v1/orders/:id
-*/
-func (a *Api) OrdersHandler(response http.ResponseWriter, request *http.Request) {
-	switch request.Method {
-	case http.MethodGet:
-		if strings.HasPrefix(request.URL.Path, "/v1/orders/") {
-			a.GetOrderById(response, request)
-
-			return
-		}
-
-		http.Error(response, "несуществующий URL", http.StatusNotFound)
-	default:
-		http.Error(response, "несуществующий http метод", http.StatusMethodNotAllowed)
 	}
 }

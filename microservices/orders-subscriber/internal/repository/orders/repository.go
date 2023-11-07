@@ -49,7 +49,7 @@ func (r *Repository) CreateOrder(order *dto.OrderDto) error {
 
 	converterOrders := &converter.Converter{}
 
-	transactions, err := helpers.ConstructorTransactions(context.Background(), pool)
+	transactions, err := helpers.NewTransactions(context.Background(), pool)
 	if err != nil {
 		return err
 	}

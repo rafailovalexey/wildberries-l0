@@ -4,15 +4,15 @@ import (
 	"fmt"
 	dto "github.com/emptyhopes/orders/internal/dto/orders"
 	repository "github.com/emptyhopes/orders/internal/repository/orders"
-	"github.com/emptyhopes/orders/internal/service"
+	def "github.com/emptyhopes/orders/internal/service"
 )
 
-type Service struct{}
+type service struct{}
 
-var _ service.OrdersServiceInterface = &Service{}
+var _ def.OrdersServiceInterface = &service{}
 
-func (s *Service) GetOrderById(id string) (*dto.OrderDto, error) {
-	orderRepository := &repository.Repository{}
+func (s *service) GetOrderById(id string) (*dto.OrderDto, error) {
+	orderRepository := repository.NewRepository()
 
 	orderCached, isExist := orderRepository.GetOrderCache(id)
 

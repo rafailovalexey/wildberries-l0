@@ -5,20 +5,24 @@ import (
 	converter "github.com/emptyhopes/orders/internal/converter/orders"
 	dto "github.com/emptyhopes/orders/internal/dto/orders"
 	model "github.com/emptyhopes/orders/internal/model/orders"
-	"github.com/emptyhopes/orders/internal/repository"
+	def "github.com/emptyhopes/orders/internal/repository"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"sync"
 	"time"
 )
 
-type Repository struct {
+type repository struct {
 	rwmutex sync.RWMutex
 }
 
-var _ repository.OrdersRepositoryInterface = &Repository{}
+var _ def.OrdersRepositoryInterface = &repository{}
 
-func (r *Repository) GetOrderCache(id string) (*dto.OrderDto, bool) {
-	orderCached, isExist := repository.Cache.Get(id)
+func NewRepository() *repository {
+	return &repository{}
+}
+
+func (r *repository) GetOrderCache(id string) (*dto.OrderDto, bool) {
+	orderCached, isExist := def.Cache.Get(id)
 
 	if orderDto, ok := orderCached.(*dto.OrderDto); ok {
 		return orderDto, isExist
@@ -27,18 +31,18 @@ func (r *Repository) GetOrderCache(id string) (*dto.OrderDto, bool) {
 	return nil, false
 }
 
-func (r *Repository) SetOrderCache(id string, orderDto *dto.OrderDto) {
-	repository.Cache.Set(id, orderDto, 5*time.Minute)
+func (r *repository) SetOrderCache(id string, orderDto *dto.OrderDto) {
+	def.Cache.Set(id, orderDto, 5*time.Minute)
 }
 
-func (r *Repository) GetOrderById(orderUid string) (*dto.OrderDto, error) {
+func (r *repository) GetOrderById(orderUid string) (*dto.OrderDto, error) {
 	r.rwmutex.Lock()
 	defer r.rwmutex.Unlock()
 
-	pool := repository.Database.GetPool()
+	pool := def.Database.GetPool()
 	defer pool.Close()
 
-	converterOrders := &converter.Converter{}
+	converterOrders := converter.NewConverter()
 
 	orderModel, err := r.getOrder(pool, orderUid)
 	if err != nil {
@@ -65,7 +69,7 @@ func (r *Repository) GetOrderById(orderUid string) (*dto.OrderDto, error) {
 	return orderDto, nil
 }
 
-func (r *Repository) getOrder(pool *pgxpool.Pool, orderUid string) (*model.OrderModel, error) {
+func (r *repository) getOrder(pool *pgxpool.Pool, orderUid string) (*model.OrderModel, error) {
 	query := `
         SELECT
            	order_uid,         
@@ -113,7 +117,7 @@ func (r *Repository) getOrder(pool *pgxpool.Pool, orderUid string) (*model.Order
 	return &order, nil
 }
 
-func (r *Repository) getOrderPayment(pool *pgxpool.Pool, paymentUid string) (*model.OrderPaymentModel, error) {
+func (r *repository) getOrderPayment(pool *pgxpool.Pool, paymentUid string) (*model.OrderPaymentModel, error) {
 	var payment model.OrderPaymentModel
 
 	query := `
@@ -157,7 +161,7 @@ func (r *Repository) getOrderPayment(pool *pgxpool.Pool, paymentUid string) (*mo
 	return &payment, nil
 }
 
-func (r *Repository) getOrderDelivery(pool *pgxpool.Pool, deliveryUid string) (*model.OrderDeliveryModel, error) {
+func (r *repository) getOrderDelivery(pool *pgxpool.Pool, deliveryUid string) (*model.OrderDeliveryModel, error) {
 	var delivery model.OrderDeliveryModel
 
 	query := `
@@ -195,7 +199,7 @@ func (r *Repository) getOrderDelivery(pool *pgxpool.Pool, deliveryUid string) (*
 	return &delivery, nil
 }
 
-func (r *Repository) getOrderItems(pool *pgxpool.Pool, orderUid string) (*[]model.OrderItemModel, error) {
+func (r *repository) getOrderItems(pool *pgxpool.Pool, orderUid string) (*[]model.OrderItemModel, error) {
 	query := `
         SELECT
             chrt_id,     

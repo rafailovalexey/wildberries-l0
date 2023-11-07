@@ -1,10 +1,11 @@
 package nats_publisher
 
 import (
-	"github.com/emptyhopes/orders-publisher/internal/service/orders"
+	controller "github.com/emptyhopes/orders-publisher/internal/controller/orders"
 	"github.com/nats-io/stan.go"
 	"log"
 	"os"
+	"time"
 )
 
 func Start() {
@@ -26,7 +27,11 @@ func Start() {
 	}
 	defer sc.Close()
 
-	service := &orders.Service{}
+	orderController := controller.NewController()
 
-	service.PublishOrders(sc, "orders")
+	for {
+		orderController.PublishOrder(sc, "orders")
+
+		time.Sleep(10 * time.Second)
+	}
 }

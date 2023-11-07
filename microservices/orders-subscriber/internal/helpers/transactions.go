@@ -21,7 +21,7 @@ type Transactions struct {
 
 var _ TransactionsInterface = &Transactions{}
 
-func ConstructorTransactions(ctx context.Context, pool *pgxpool.Pool) (*Transactions, error) {
+func NewTransactions(ctx context.Context, pool *pgxpool.Pool) (*Transactions, error) {
 	transactions, err := pool.Begin(ctx)
 
 	if err != nil {

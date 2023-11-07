@@ -5,5 +5,5 @@ import (
 )
 
 type OrdersServiceInterface interface {
-	PublishOrders(sc stan.Conn, subject string)
+	PublishOrder(sc stan.Conn, subject string)
 }

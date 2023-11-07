@@ -13,17 +13,17 @@ type DatabaseInterface interface {
 	GetPool() *pgxpool.Pool
 }
 
-type Database struct {
+type database struct {
 	credentials string
 }
 
-var _ DatabaseInterface = &Database{}
+var _ DatabaseInterface = &database{}
 
-func ConstructorDatabase() *Database {
-	return &Database{}
+func NewDatabase() *database {
+	return &database{}
 }
 
-func (d *Database) Initialize() {
+func (d *database) Initialize() {
 	username := os.Getenv("POSTGRESQL_USERNAME")
 
 	if username == "" {
@@ -63,7 +63,7 @@ func (d *Database) Initialize() {
 	d.credentials = fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s sslmode=%s", username, password, database, hostname, port, sslmode)
 }
 
-func (d *Database) GetPool() *pgxpool.Pool {
+func (d *database) GetPool() *pgxpool.Pool {
 	pool, err := pgxpool.Connect(context.Background(), d.credentials)
 
 	if err != nil {
