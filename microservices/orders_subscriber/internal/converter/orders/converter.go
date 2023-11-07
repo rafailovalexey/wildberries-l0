@@ -76,8 +76,8 @@ func (c *converter) MapOrderItemDtoToOrderItemModel(dto *dto.OrderItemDto, order
 	}
 }
 
-func (c *converter) MapOrderItemsDtoToOrderItemsModel(dtos *[]dto.OrderItemDto, orderUid string) *[]model.OrderItemModel {
-	models := make([]model.OrderItemModel, len(*dtos))
+func (c *converter) MapOrderItemsDtoToOrderItemsModel(dtos *[]dto.OrderItemDto, orderUid string) *model.OrderItemsModel {
+	models := make(model.OrderItemsModel, len(*dtos))
 
 	for index, value := range *dtos {
 		models[index] = *c.MapOrderItemDtoToOrderItemModel(&value, orderUid)
@@ -86,7 +86,7 @@ func (c *converter) MapOrderItemsDtoToOrderItemsModel(dtos *[]dto.OrderItemDto, 
 	return &models
 }
 
-func (c *converter) MapOrderModelToOrderDto(order *model.OrderModel, delivery *model.OrderDeliveryModel, payment *model.OrderPaymentModel, items *[]model.OrderItemModel) *dto.OrderDto {
+func (c *converter) MapOrderModelToOrderDto(order *model.OrderModel, delivery *model.OrderDeliveryModel, payment *model.OrderPaymentModel, items *model.OrderItemsModel) *dto.OrderDto {
 	return &dto.OrderDto{
 		OrderUid:          order.OrderUid,
 		TrackNumber:       order.TrackNumber,
@@ -148,7 +148,7 @@ func (c *converter) MapOrderItemModelToOrderItemDto(model *model.OrderItemModel)
 	}
 }
 
-func (c *converter) MapOrderItemsModelToOrderItemsDto(models *[]model.OrderItemModel) *[]dto.OrderItemDto {
+func (c *converter) MapOrderItemsModelToOrderItemsDto(models *model.OrderItemsModel) *[]dto.OrderItemDto {
 	dtos := make([]dto.OrderItemDto, len(*models))
 
 	for index, value := range *models {

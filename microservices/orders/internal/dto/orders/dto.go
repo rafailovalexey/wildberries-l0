@@ -6,7 +6,7 @@ type OrderDto struct {
 	Entry             string            `json:"entry"`
 	Delivery          *OrderDeliveryDto `json:"delivery"`
 	Payment           *OrderPaymentDto  `json:"payment"`
-	Items             *[]OrderItemDto   `json:"items"`
+	Items             *OrderItemsDto    `json:"items"`
 	Locale            string            `json:"locale"`
 	InternalSignature string            `json:"internal_signature"`
 	CustomerId        string            `json:"customer_id"`
@@ -54,13 +54,15 @@ type OrderItemDto struct {
 	Status      int    `json:"status"`
 }
 
+type OrderItemsDto = []OrderItemDto
+
 func NewOrderDto(
 	OrderUid string,
 	TrackNumber string,
 	Entry string,
 	Delivery *OrderDeliveryDto,
 	Payment *OrderPaymentDto,
-	Items *[]OrderItemDto,
+	Items *OrderItemsDto,
 	Locale string,
 	InternalSignature string,
 	CustomerId string,
@@ -161,13 +163,12 @@ func NewOrderItemDto(
 }
 
 func NewOrderItemsDto(
-	dtos ...OrderItemDto,
-) *[]OrderItemDto {
-	items := make([]OrderItemDto, 0, 10)
+	dtos ...*OrderItemDto,
+) *OrderItemsDto {
+	items := make(OrderItemsDto, 0, 10)
 
 	for _, dto := range dtos {
-
-		items = append(items, dto)
+		items = append(items, *dto)
 	}
 
 	return &items

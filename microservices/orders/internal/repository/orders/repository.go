@@ -209,7 +209,7 @@ func (r *repository) getOrderDelivery(pool *pgxpool.Pool, deliveryUid string) (*
 	return &delivery, nil
 }
 
-func (r *repository) getOrderItems(pool *pgxpool.Pool, orderUid string) (*[]model.OrderItemModel, error) {
+func (r *repository) getOrderItems(pool *pgxpool.Pool, orderUid string) (*model.OrderItemsModel, error) {
 	query := `
         SELECT
             chrt_id,     
@@ -239,7 +239,7 @@ func (r *repository) getOrderItems(pool *pgxpool.Pool, orderUid string) (*[]mode
 
 	defer rows.Close()
 
-	items := make([]model.OrderItemModel, 0, 10)
+	items := make(model.OrderItemsModel, 0, 10)
 
 	for rows.Next() {
 		item := model.OrderItemModel{}
