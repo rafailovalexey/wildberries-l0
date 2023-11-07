@@ -9,10 +9,22 @@ import (
 )
 
 func Start(orderController controller.OrderControllerInterface) {
+	sc := connect()
+
+	defer sc.Close()
+
+	for {
+		orderController.PublishOrder(sc, "orders")
+
+		time.Sleep(10 * time.Second)
+	}
+}
+
+func connect() stan.Conn {
 	url := os.Getenv("NATS_URL")
 
 	if url == "" {
-		log.Fatalf("укажите nats-publisher url")
+		log.Fatalf("укажите nats url")
 	}
 
 	cluster := os.Getenv("NATS_CLUSTER_ID")
@@ -27,11 +39,5 @@ func Start(orderController controller.OrderControllerInterface) {
 		log.Fatalf("ошибка %v\n", err)
 	}
 
-	defer sc.Close()
-
-	for {
-		orderController.PublishOrder(sc, "orders")
-
-		time.Sleep(10 * time.Second)
-	}
+	return sc
 }

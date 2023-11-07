@@ -20,6 +20,8 @@ func NewOrderService(orderRepository repository.OrderRepositoryInterface) *servi
 }
 
 func (s *service) HandleOrderMessage(order *dto.OrderDto) {
+	fmt.Printf("добавил в кэш сообщение с order_uid: %s\n", order.OrderUid)
+
 	s.orderRepository.SetOrderCache(order.OrderUid, order)
 
 	ordersCache := s.orderRepository.GetOrdersCache()
@@ -47,6 +49,6 @@ func (s *service) HandleOrderMessage(order *dto.OrderDto) {
 
 		s.orderRepository.DeleteOrderCacheById(orderDto.OrderUid)
 
-		fmt.Printf("очистил кэш для order_uid: %s\n", order.OrderUid)
+		fmt.Printf("удалил из кэша сообщение с order_uid: %s\n", order.OrderUid)
 	}
 }

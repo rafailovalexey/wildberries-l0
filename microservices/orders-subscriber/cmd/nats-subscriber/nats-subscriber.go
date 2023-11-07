@@ -11,18 +11,18 @@ import (
 )
 
 func Start(orderController controller.OrderControllerInterface) {
-	sc := Connect()
+	sc := connect()
 
 	defer sc.Close()
 
-	Subscribe(sc, "orders", "orders", orderController.HandleOrderMessage)
+	subscribe(sc, "orders", "orders", orderController.HandleOrderMessage)
 }
 
-func Connect() stan.Conn {
+func connect() stan.Conn {
 	url := os.Getenv("NATS_URL")
 
 	if url == "" {
-		log.Fatalf("укажите nats-publisher url")
+		log.Fatalf("укажите nats url")
 	}
 
 	cluster := os.Getenv("NATS_CLUSTER_ID")
@@ -31,7 +31,7 @@ func Connect() stan.Conn {
 		log.Fatalf("укажите идентификатор кластера")
 	}
 
-	sc, err := stan.Connect(cluster, "publisher-1", stan.NatsURL(url))
+	sc, err := stan.Connect(cluster, "subscriber-1", stan.NatsURL(url))
 
 	if err != nil {
 		log.Fatalf("ошибка %v\n", err)
@@ -40,14 +40,14 @@ func Connect() stan.Conn {
 	return sc
 }
 
-func Subscribe(sc stan.Conn, subject string, queue string, handler stan.MsgHandler) {
-	subscribe, err := sc.QueueSubscribe(subject, queue, handler)
+func subscribe(sc stan.Conn, subject string, queue string, handler stan.MsgHandler) {
+	sub, err := sc.QueueSubscribe(subject, queue, handler)
 
 	if err != nil {
 		log.Fatalf("ошибка %v\n", err)
 	}
 
-	defer subscribe.Unsubscribe()
+	defer sub.Unsubscribe()
 
 	fmt.Printf("подписался на очередь сообщений: %s\n", subject)
 
