@@ -2,7 +2,7 @@ package orders
 
 import (
 	"context"
-	converter "github.com/emptyhopes/orders/internal/converter/orders"
+	"github.com/emptyhopes/orders/internal/converter"
 	dto "github.com/emptyhopes/orders/internal/dto/orders"
 	model "github.com/emptyhopes/orders/internal/model/orders"
 	def "github.com/emptyhopes/orders/internal/repository"
@@ -12,13 +12,16 @@ import (
 )
 
 type repository struct {
-	rwmutex sync.RWMutex
+	orderConverter converter.OrdersConverterInterface
+	rwmutex        sync.RWMutex
 }
 
 var _ def.OrdersRepositoryInterface = &repository{}
 
-func NewRepository() *repository {
-	return &repository{}
+func NewRepository(orderConverter converter.OrdersConverterInterface) *repository {
+	return &repository{
+		orderConverter: orderConverter,
+	}
 }
 
 func (r *repository) GetOrderCache(id string) (*dto.OrderDto, bool) {
@@ -42,8 +45,6 @@ func (r *repository) GetOrderById(orderUid string) (*dto.OrderDto, error) {
 	pool := def.Database.GetPool()
 	defer pool.Close()
 
-	converterOrders := converter.NewConverter()
-
 	orderModel, err := r.getOrder(pool, orderUid)
 	if err != nil {
 		return nil, err
@@ -64,7 +65,7 @@ func (r *repository) GetOrderById(orderUid string) (*dto.OrderDto, error) {
 		return nil, err
 	}
 
-	orderDto := converterOrders.MapOrderModelToOrderDto(orderModel, orderDeliveryModel, orderPaymentModel, orderItemsModel)
+	orderDto := r.orderConverter.MapOrderModelToOrderDto(orderModel, orderDeliveryModel, orderPaymentModel, orderItemsModel)
 
 	return orderDto, nil
 }

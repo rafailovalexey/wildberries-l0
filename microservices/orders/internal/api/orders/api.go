@@ -4,17 +4,21 @@ import (
 	"encoding/json"
 	"fmt"
 	def "github.com/emptyhopes/orders/internal/api"
-	service "github.com/emptyhopes/orders/internal/service/orders"
+	"github.com/emptyhopes/orders/internal/service"
 	"net/http"
 	"strings"
 )
 
-type api struct{}
+type api struct {
+	orderService service.OrdersServiceInterface
+}
 
 var _ def.OrdersApiInterface = &api{}
 
-func NewApi() *api {
-	return &api{}
+func NewApi(orderService service.OrdersServiceInterface) *api {
+	return &api{
+		orderService: orderService,
+	}
 }
 
 /*
@@ -49,9 +53,7 @@ func (a *api) GetOrderById(response http.ResponseWriter, request *http.Request) 
 
 	id := segments[3]
 
-	orderService := service.NewService()
-
-	orderDto, err := orderService.GetOrderById(id)
+	orderDto, err := a.orderService.GetOrderById(id)
 
 	if err != nil {
 		if strings.Contains(err.Error(), "no rows in result set") {

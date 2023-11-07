@@ -3,24 +3,26 @@ package orders
 import (
 	"encoding/json"
 	"fmt"
-	repository "github.com/emptyhopes/orders-publisher/internal/repository/orders"
+	"github.com/emptyhopes/orders-publisher/internal/repository"
 	def "github.com/emptyhopes/orders-publisher/internal/service"
 	"github.com/nats-io/stan.go"
 	"log"
 )
 
-type service struct{}
+type service struct {
+	orderRepository repository.OrdersRepositoryInterface
+}
 
 var _ def.OrdersServiceInterface = &service{}
 
-func NewService() *service {
-	return &service{}
+func NewService(orderRepository repository.OrdersRepositoryInterface) *service {
+	return &service{
+		orderRepository: orderRepository,
+	}
 }
 
 func (s *service) PublishOrder(sc stan.Conn, subject string) {
-	orderRepository := repository.NewRepository()
-
-	order := orderRepository.GetOrder()
+	order := s.orderRepository.GetOrder()
 
 	message, err := json.Marshal(order)
 

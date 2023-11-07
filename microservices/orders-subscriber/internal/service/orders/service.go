@@ -3,24 +3,26 @@ package orders
 import (
 	"fmt"
 	dto "github.com/emptyhopes/orders-subscriber/internal/dto/orders"
-	repository "github.com/emptyhopes/orders-subscriber/internal/repository/orders"
+	"github.com/emptyhopes/orders-subscriber/internal/repository"
 	def "github.com/emptyhopes/orders-subscriber/internal/service"
 )
 
-type service struct{}
+type service struct {
+	orderRepository repository.OrdersRepositoryInterface
+}
 
 var _ def.OrdersServiceInterface = &service{}
 
-func NewService() *service {
-	return &service{}
+func NewService(orderRepository repository.OrdersRepositoryInterface) *service {
+	return &service{
+		orderRepository: orderRepository,
+	}
 }
 
 func (s *service) HandleOrderMessage(order *dto.OrderDto) {
-	repositoryOrders := repository.NewRepository()
+	s.orderRepository.SetOrderCache(order.OrderUid, order)
 
-	repositoryOrders.SetOrderCache(order.OrderUid, order)
-
-	ordersCache := repositoryOrders.GetOrdersCache()
+	ordersCache := s.orderRepository.GetOrdersCache()
 
 	for _, value := range ordersCache {
 		orderDto, ok := value.Data.(*dto.OrderDto)
@@ -28,12 +30,12 @@ func (s *service) HandleOrderMessage(order *dto.OrderDto) {
 		if !ok {
 			fmt.Printf("ошибка при приведение типа")
 
-			repositoryOrders.DeleteOrderCacheById(orderDto.OrderUid)
+			s.orderRepository.DeleteOrderCacheById(orderDto.OrderUid)
 
 			return
 		}
 
-		err := repositoryOrders.CreateOrder(orderDto)
+		err := s.orderRepository.CreateOrder(orderDto)
 
 		if err != nil {
 			fmt.Printf("ошибка при создание заказа %v\n", err)
@@ -43,7 +45,7 @@ func (s *service) HandleOrderMessage(order *dto.OrderDto) {
 
 		fmt.Printf("обработал сообщение с order_uid: %s\n", order.OrderUid)
 
-		repositoryOrders.DeleteOrderCacheById(orderDto.OrderUid)
+		s.orderRepository.DeleteOrderCacheById(orderDto.OrderUid)
 
 		fmt.Printf("очистил кэш для order_uid: %s\n", order.OrderUid)
 	}

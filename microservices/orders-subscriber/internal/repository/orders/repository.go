@@ -2,7 +2,7 @@ package orders
 
 import (
 	"context"
-	converter "github.com/emptyhopes/orders-subscriber/internal/converter/orders"
+	"github.com/emptyhopes/orders-subscriber/internal/converter"
 	dto "github.com/emptyhopes/orders-subscriber/internal/dto/orders"
 	"github.com/emptyhopes/orders-subscriber/internal/helpers"
 	model "github.com/emptyhopes/orders-subscriber/internal/model/orders"
@@ -13,13 +13,16 @@ import (
 )
 
 type repository struct {
-	rwmutex sync.RWMutex
+	orderConverter converter.OrdersConverterInterface
+	rwmutex        sync.RWMutex
 }
 
 var _ def.OrdersRepositoryInterface = &repository{}
 
-func NewRepository() *repository {
-	return &repository{}
+func NewRepository(orderConverter converter.OrdersConverterInterface) *repository {
+	return &repository{
+		orderConverter: orderConverter,
+	}
 }
 
 func (r *repository) GetOrdersCache() map[string]storage.CacheItem {
@@ -51,8 +54,6 @@ func (r *repository) CreateOrder(order *dto.OrderDto) error {
 	pool := def.Database.GetPool()
 	defer pool.Close()
 
-	converterOrders := converter.NewConverter()
-
 	transactions, err := helpers.NewTransactions(context.Background(), pool)
 	if err != nil {
 		return err
@@ -60,24 +61,24 @@ func (r *repository) CreateOrder(order *dto.OrderDto) error {
 
 	defer transactions.Rollback(context.Background())
 
-	orderPaymentModel := converterOrders.MapOrderPaymentDtoToOrderPaymentModel(order.Payment)
+	orderPaymentModel := r.orderConverter.MapOrderPaymentDtoToOrderPaymentModel(order.Payment)
 	paymentUid, err := r.insertOrderPayment(transactions, orderPaymentModel)
 	if err != nil {
 		return err
 	}
 
-	orderDeliveryModel := converterOrders.MapOrderDeliveryDtoToOrderDeliveryModel(order.Delivery)
+	orderDeliveryModel := r.orderConverter.MapOrderDeliveryDtoToOrderDeliveryModel(order.Delivery)
 	deliveryUid, err := r.insertOrderDelivery(transactions, orderDeliveryModel)
 	if err != nil {
 		return err
 	}
 
-	orderModel := converterOrders.MapOrderDtoToOrderModel(order, deliveryUid, paymentUid)
+	orderModel := r.orderConverter.MapOrderDtoToOrderModel(order, deliveryUid, paymentUid)
 	if err := r.insertOrder(transactions, orderModel); err != nil {
 		return err
 	}
 
-	orderItemsModel := converterOrders.MapOrderItemsDtoToOrderItemsModel(order.Items, orderModel.OrderUid)
+	orderItemsModel := r.orderConverter.MapOrderItemsDtoToOrderItemsModel(order.Items, orderModel.OrderUid)
 	if err := r.insertOrderItems(transactions, orderItemsModel); err != nil {
 		return err
 	}

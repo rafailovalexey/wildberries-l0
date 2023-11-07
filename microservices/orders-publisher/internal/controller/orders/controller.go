@@ -2,24 +2,26 @@ package orders
 
 import (
 	def "github.com/emptyhopes/orders-publisher/internal/controller"
-	service "github.com/emptyhopes/orders-publisher/internal/service/orders"
+	"github.com/emptyhopes/orders-publisher/internal/service"
 	"github.com/nats-io/stan.go"
 	"time"
 )
 
-type controller struct{}
+type controller struct {
+	orderService service.OrdersServiceInterface
+}
 
 var _ def.OrderControllerInterface = &controller{}
 
-func NewController() *controller {
-	return &controller{}
+func NewController(orderService service.OrdersServiceInterface) *controller {
+	return &controller{
+		orderService: orderService,
+	}
 }
 
 func (c *controller) PublishOrder(sc stan.Conn, subject string) {
-	orderService := service.NewService()
-
 	for {
-		orderService.PublishOrder(sc, subject)
+		c.orderService.PublishOrder(sc, subject)
 
 		time.Sleep(10 * time.Second)
 	}

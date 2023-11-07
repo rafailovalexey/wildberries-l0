@@ -5,16 +5,20 @@ import (
 	"fmt"
 	def "github.com/emptyhopes/orders-subscriber/internal/controller"
 	dto "github.com/emptyhopes/orders-subscriber/internal/dto/orders"
-	"github.com/emptyhopes/orders-subscriber/internal/service/orders"
+	"github.com/emptyhopes/orders-subscriber/internal/service"
 	"github.com/nats-io/stan.go"
 )
 
-type controller struct{}
+type controller struct {
+	orderService service.OrdersServiceInterface
+}
 
 var _ def.OrdersControllerInterface = &controller{}
 
-func NewController() *controller {
-	return &controller{}
+func NewController(orderService service.OrdersServiceInterface) *controller {
+	return &controller{
+		orderService: orderService,
+	}
 }
 
 func (c *controller) HandleOrderMessage(message *stan.Msg) {
@@ -28,7 +32,5 @@ func (c *controller) HandleOrderMessage(message *stan.Msg) {
 		return
 	}
 
-	orderService := orders.NewService()
-
-	orderService.HandleOrderMessage(&order)
+	c.orderService.HandleOrderMessage(&order)
 }
