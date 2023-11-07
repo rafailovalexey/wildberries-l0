@@ -11,7 +11,7 @@ import (
 type TransactionsInterface interface {
 	Rollback(ctx context.Context) error
 	Commit(ctx context.Context) error
-	QueryRow(ctx context.Context, sql string, args ...interface{}) pgx.Row
+	QueryRow(ctx context.Context, sql string, args ...any) pgx.Row
 }
 
 type Transactions struct {
@@ -45,14 +45,14 @@ func (t *Transactions) Commit(ctx context.Context) error {
 	return t.transactions.Commit(ctx)
 }
 
-func (t *Transactions) QueryRow(ctx context.Context, sql string, args ...interface{}) pgx.Row {
+func (t *Transactions) QueryRow(ctx context.Context, sql string, args ...any) pgx.Row {
 	t.mutex.Lock()
 	defer t.mutex.Unlock()
 
 	return t.transactions.QueryRow(ctx, sql, args...)
 }
 
-func (t *Transactions) Exec(ctx context.Context, sql string, args ...interface{}) (pgconn.CommandTag, error) {
+func (t *Transactions) Exec(ctx context.Context, sql string, args ...any) (pgconn.CommandTag, error) {
 	t.mutex.Lock()
 	defer t.mutex.Unlock()
 

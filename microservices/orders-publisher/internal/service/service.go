@@ -4,6 +4,6 @@ import (
 	"github.com/nats-io/stan.go"
 )
 
-type OrdersServiceInterface interface {
+type OrderServiceInterface interface {
 	PublishOrder(sc stan.Conn, subject string)
 }

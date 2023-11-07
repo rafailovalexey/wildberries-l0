@@ -10,12 +10,12 @@ import (
 )
 
 type service struct {
-	orderRepository repository.OrdersRepositoryInterface
+	orderRepository repository.OrderRepositoryInterface
 }
 
-var _ definition.OrdersServiceInterface = &service{}
+var _ definition.OrderServiceInterface = &service{}
 
-func NewService(orderRepository repository.OrdersRepositoryInterface) *service {
+func NewOrderService(orderRepository repository.OrderRepositoryInterface) *service {
 	return &service{
 		orderRepository: orderRepository,
 	}

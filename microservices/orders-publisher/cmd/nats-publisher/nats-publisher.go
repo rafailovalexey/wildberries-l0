@@ -1,14 +1,14 @@
 package nats_publisher
 
 import (
-	controller "github.com/emptyhopes/orders-publisher/internal/controller/orders"
+	"github.com/emptyhopes/orders-publisher/internal/controller"
 	"github.com/nats-io/stan.go"
 	"log"
 	"os"
 	"time"
 )
 
-func Start() {
+func Start(orderController controller.OrderControllerInterface) {
 	url := os.Getenv("NATS_URL")
 
 	if url == "" {
@@ -26,8 +26,6 @@ func Start() {
 		log.Fatalf("ошибка %v\n", err)
 	}
 	defer sc.Close()
-
-	orderController := controller.NewController()
 
 	for {
 		orderController.PublishOrder(sc, "orders")

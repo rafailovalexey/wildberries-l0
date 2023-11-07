@@ -9,9 +9,9 @@ import (
 
 type repository struct{}
 
-var _ definition.OrdersRepositoryInterface = &repository{}
+var _ definition.OrderRepositoryInterface = &repository{}
 
-func NewRepository() *repository {
+func NewOrderRepository() *repository {
 	return &repository{}
 }
 

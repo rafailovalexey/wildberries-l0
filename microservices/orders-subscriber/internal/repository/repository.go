@@ -5,19 +5,7 @@ import (
 	"github.com/emptyhopes/orders-subscriber/storage"
 )
 
-var Cache = storage.NewCache()
-var Database = storage.NewDatabase()
-
-func init() {
-	Database.Initialize()
-
-	pool := Database.GetPool()
-	defer pool.Close()
-
-	Database.CreateTables(pool)
-}
-
-type OrdersRepositoryInterface interface {
+type OrderRepositoryInterface interface {
 	GetOrdersCache() map[string]storage.CacheItem
 	GetOrderCacheById(string) (*dto.OrderDto, bool)
 	SetOrderCache(string, *dto.OrderDto)

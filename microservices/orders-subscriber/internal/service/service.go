@@ -4,6 +4,6 @@ import (
 	dto "github.com/emptyhopes/orders-subscriber/internal/dto/orders"
 )
 
-type OrdersServiceInterface interface {
+type OrderServiceInterface interface {
 	HandleOrderMessage(*dto.OrderDto)
 }

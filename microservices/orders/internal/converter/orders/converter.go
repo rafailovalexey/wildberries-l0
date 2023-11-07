@@ -9,9 +9,9 @@ import (
 
 type converter struct{}
 
-var _ definition.OrdersConverterInterface = &converter{}
+var _ definition.OrderConverterInterface = &converter{}
 
-func NewConverter() *converter {
+func NewOrderConverter() *converter {
 	return &converter{}
 }
 

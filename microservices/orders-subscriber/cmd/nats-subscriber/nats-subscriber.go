@@ -2,7 +2,7 @@ package nats_subscriber
 
 import (
 	"fmt"
-	controller "github.com/emptyhopes/orders-subscriber/internal/controller/orders"
+	"github.com/emptyhopes/orders-subscriber/internal/controller"
 	"github.com/nats-io/stan.go"
 	"log"
 	"os"
@@ -10,12 +10,10 @@ import (
 	"syscall"
 )
 
-func Start() {
+func Start(orderController controller.OrderControllerInterface) {
 	sc := Connect()
 
 	defer sc.Close()
-
-	orderController := controller.NewController()
 
 	Subscribe(sc, "orders", "orders", orderController.HandleOrderMessage)
 }
@@ -33,7 +31,7 @@ func Connect() stan.Conn {
 		log.Fatalf("укажите идентификатор кластера")
 	}
 
-	sc, err := stan.Connect(cluster, "subscriber-1", stan.NatsURL(url))
+	sc, err := stan.Connect(cluster, "publisher-1", stan.NatsURL(url))
 
 	if err != nil {
 		log.Fatalf("ошибка %v\n", err)

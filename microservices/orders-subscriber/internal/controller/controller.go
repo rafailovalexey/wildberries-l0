@@ -2,6 +2,6 @@ package controller
 
 import "github.com/nats-io/stan.go"
 
-type OrdersControllerInterface interface {
+type OrderControllerInterface interface {
 	HandleOrderMessage(*stan.Msg)
 }

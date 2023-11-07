@@ -7,14 +7,14 @@ import (
 
 type CacheInterface interface {
 	GetCache() map[string]CacheItem
-	Get(string) (interface{}, bool)
-	Set(string, interface{}, time.Duration)
+	Get(string) (any, bool)
+	Set(string, any, time.Duration)
 	Delete(string)
 	Clear()
 }
 
 type CacheItem struct {
-	Data    interface{}
+	Data    any
 	Expires time.Time
 }
 
@@ -38,7 +38,7 @@ func (c *cache) GetCache() map[string]CacheItem {
 	return c.items
 }
 
-func (c *cache) Get(key string) (interface{}, bool) {
+func (c *cache) Get(key string) (any, bool) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 
@@ -57,7 +57,7 @@ func (c *cache) Get(key string) (interface{}, bool) {
 	return item.Data, true
 }
 
-func (c *cache) Set(key string, value interface{}, ttl time.Duration) {
+func (c *cache) Set(key string, value any, ttl time.Duration) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 

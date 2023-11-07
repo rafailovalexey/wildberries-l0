@@ -10,12 +10,12 @@ import (
 )
 
 type controller struct {
-	orderService service.OrdersServiceInterface
+	orderService service.OrderServiceInterface
 }
 
-var _ definition.OrdersControllerInterface = &controller{}
+var _ definition.OrderControllerInterface = &controller{}
 
-func NewController(orderService service.OrdersServiceInterface) *controller {
+func NewOrderController(orderService service.OrderServiceInterface) *controller {
 	return &controller{
 		orderService: orderService,
 	}

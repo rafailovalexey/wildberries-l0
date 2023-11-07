@@ -25,7 +25,16 @@ type database struct {
 var _ DatabaseInterface = &database{}
 
 func NewDatabase() *database {
-	return &database{}
+	d := &database{}
+
+	d.Initialize()
+
+	pool := d.GetPool()
+	defer pool.Close()
+
+	d.CreateTables(pool)
+
+	return d
 }
 
 func (d *database) Initialize() {

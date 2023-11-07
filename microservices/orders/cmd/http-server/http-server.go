@@ -4,21 +4,19 @@ import (
 	"fmt"
 	"github.com/emptyhopes/orders/cmd/http-server/interceptor"
 	"github.com/emptyhopes/orders/cmd/http-server/middleware"
-	api "github.com/emptyhopes/orders/internal/api/orders"
+	"github.com/emptyhopes/orders/internal/api"
 	"log"
 	"net/http"
 	"os"
 )
 
-func Run() {
+func Run(orderApi api.OrderApiInterface) {
 	router := http.NewServeMux()
 
 	middlewares := middleware.ChainMiddleware(
 		interceptor.LoggingInterceptor,
 		middleware.AuthenticationMiddleware,
 	)
-
-	orderApi := api.NewApi()
 
 	router.Handle("/v1/orders/", middlewares(http.HandlerFunc(orderApi.OrdersHandler)))
 

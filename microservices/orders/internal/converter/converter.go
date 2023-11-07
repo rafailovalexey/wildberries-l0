@@ -5,7 +5,7 @@ import (
 	model "github.com/emptyhopes/orders/internal/model/orders"
 )
 
-type OrdersConverterInterface interface {
+type OrderConverterInterface interface {
 	MapOrderDtoToOrderModel(*dto.OrderDto, string, string) *model.OrderModel
 	MapOrderPaymentDtoToOrderPaymentModel(*dto.OrderPaymentDto) *model.OrderPaymentModel
 	MapOrderDeliveryDtoToOrderDeliveryModel(*dto.OrderDeliveryDto) *model.OrderDeliveryModel

@@ -6,26 +6,35 @@ import (
 	dto "github.com/emptyhopes/orders/internal/dto/orders"
 	model "github.com/emptyhopes/orders/internal/model/orders"
 	definition "github.com/emptyhopes/orders/internal/repository"
+	"github.com/emptyhopes/orders/storage"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"sync"
 	"time"
 )
 
 type repository struct {
-	orderConverter converter.OrdersConverterInterface
+	orderConverter converter.OrderConverterInterface
+	cache          storage.CacheInterface
+	database       storage.DatabaseInterface
 	rwmutex        sync.RWMutex
 }
 
-var _ definition.OrdersRepositoryInterface = &repository{}
+var _ definition.OrderRepositoryInterface = &repository{}
 
-func NewRepository(orderConverter converter.OrdersConverterInterface) *repository {
+func NewOrderRepository(
+	orderConverter converter.OrderConverterInterface,
+	database storage.DatabaseInterface,
+	cache storage.CacheInterface,
+) *repository {
 	return &repository{
 		orderConverter: orderConverter,
+		database:       database,
+		cache:          cache,
 	}
 }
 
 func (r *repository) GetOrderCache(id string) (*dto.OrderDto, bool) {
-	orderCached, isExist := definition.Cache.Get(id)
+	orderCached, isExist := r.cache.Get(id)
 
 	if orderDto, ok := orderCached.(*dto.OrderDto); ok {
 		return orderDto, isExist
@@ -35,14 +44,14 @@ func (r *repository) GetOrderCache(id string) (*dto.OrderDto, bool) {
 }
 
 func (r *repository) SetOrderCache(id string, orderDto *dto.OrderDto) {
-	definition.Cache.Set(id, orderDto, 5*time.Minute)
+	r.cache.Set(id, orderDto, 5*time.Minute)
 }
 
 func (r *repository) GetOrderById(orderUid string) (*dto.OrderDto, error) {
 	r.rwmutex.Lock()
 	defer r.rwmutex.Unlock()
 
-	pool := definition.Database.GetPool()
+	pool := r.database.GetPool()
 	defer pool.Close()
 
 	orderModel, err := r.getOrder(pool, orderUid)

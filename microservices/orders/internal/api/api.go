@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-type OrdersApiInterface interface {
+type OrderApiInterface interface {
 	OrdersHandler(http.ResponseWriter, *http.Request)
 	GetOrderById(http.ResponseWriter, *http.Request)
 }

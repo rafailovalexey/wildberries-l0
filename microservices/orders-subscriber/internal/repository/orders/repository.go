@@ -13,24 +13,32 @@ import (
 )
 
 type repository struct {
-	orderConverter converter.OrdersConverterInterface
+	orderConverter converter.OrderConverterInterface
+	cache          storage.CacheInterface
+	database       storage.DatabaseInterface
 	rwmutex        sync.RWMutex
 }
 
-var _ definition.OrdersRepositoryInterface = &repository{}
+var _ definition.OrderRepositoryInterface = &repository{}
 
-func NewRepository(orderConverter converter.OrdersConverterInterface) *repository {
+func NewOrderRepository(
+	orderConverter converter.OrderConverterInterface,
+	database storage.DatabaseInterface,
+	cache storage.CacheInterface,
+) *repository {
 	return &repository{
 		orderConverter: orderConverter,
+		database:       database,
+		cache:          cache,
 	}
 }
 
 func (r *repository) GetOrdersCache() map[string]storage.CacheItem {
-	return definition.Cache.GetCache()
+	return r.cache.GetCache()
 }
 
 func (r *repository) GetOrderCacheById(id string) (*dto.OrderDto, bool) {
-	orderCached, isExist := definition.Cache.Get(id)
+	orderCached, isExist := r.cache.Get(id)
 
 	if orderDto, ok := orderCached.(*dto.OrderDto); ok {
 		return orderDto, isExist
@@ -40,18 +48,18 @@ func (r *repository) GetOrderCacheById(id string) (*dto.OrderDto, bool) {
 }
 
 func (r *repository) SetOrderCache(id string, orderDto *dto.OrderDto) {
-	definition.Cache.Set(id, orderDto, 5*time.Minute)
+	r.cache.Set(id, orderDto, 5*time.Minute)
 }
 
 func (r *repository) DeleteOrderCacheById(id string) {
-	definition.Cache.Delete(id)
+	r.cache.Delete(id)
 }
 
 func (r *repository) CreateOrder(order *dto.OrderDto) error {
 	r.rwmutex.Lock()
 	defer r.rwmutex.Unlock()
 
-	pool := definition.Database.GetPool()
+	pool := r.database.GetPool()
 	defer pool.Close()
 
 	transactions, err := helpers.NewTransactions(context.Background(), pool)

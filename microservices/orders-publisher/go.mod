@@ -9,6 +9,7 @@ require (
 
 require (
 	github.com/gogo/protobuf v1.3.2 // indirect
+	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/klauspost/compress v1.17.2 // indirect
 	github.com/nats-io/nats-server/v2 v2.10.4 // indirect
 	github.com/nats-io/nats-streaming-server v0.25.5 // indirect

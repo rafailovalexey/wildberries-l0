@@ -10,12 +10,12 @@ import (
 )
 
 type api struct {
-	orderService service.OrdersServiceInterface
+	orderService service.OrderServiceInterface
 }
 
-var _ definition.OrdersApiInterface = &api{}
+var _ definition.OrderApiInterface = &api{}
 
-func NewApi(orderService service.OrdersServiceInterface) *api {
+func NewOrderApi(orderService service.OrderServiceInterface) *api {
 	return &api{
 		orderService: orderService,
 	}
@@ -75,7 +75,7 @@ func (a *api) GetOrderById(response http.ResponseWriter, request *http.Request) 
 		return
 	}
 
-	response.Header().Set("Content-Type", "application/json")
+	response.Header().Set("Content-Type", "publisher/json")
 	response.WriteHeader(http.StatusOK)
 
 	_, err = response.Write(orderJson)

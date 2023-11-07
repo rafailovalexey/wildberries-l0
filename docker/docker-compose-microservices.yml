@@ -16,8 +16,8 @@ services:
       dockerfile: "application.dockerfile"
 
   orders-subscriber:
-    container_name: "orders-subscriber"
-    hostname: "orders-subscriber"
+    container_name: "orders-publisher"
+    hostname: "orders-publisher"
     restart: "always"
     networks:
       - "network"

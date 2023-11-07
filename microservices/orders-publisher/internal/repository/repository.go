@@ -4,6 +4,6 @@ import (
 	dto "github.com/emptyhopes/orders-publisher/internal/dto/orders"
 )
 
-type OrdersRepositoryInterface interface {
+type OrderRepositoryInterface interface {
 	GetOrder() *dto.OrderDto
 }
