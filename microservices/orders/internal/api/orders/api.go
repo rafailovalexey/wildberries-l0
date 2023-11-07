@@ -45,7 +45,7 @@ func (a *api) GetOrderById(response http.ResponseWriter, request *http.Request) 
 
 	id := segments[3]
 
-	orderService := &service.Service{}
+	orderService := service.NewService()
 
 	orderDto, err := orderService.GetOrderById(id)
 

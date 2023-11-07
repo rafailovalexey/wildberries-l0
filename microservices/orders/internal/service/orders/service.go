@@ -11,6 +11,10 @@ type service struct{}
 
 var _ def.OrdersServiceInterface = &service{}
 
+func NewService() *service {
+	return &service{}
+}
+
 func (s *service) GetOrderById(id string) (*dto.OrderDto, error) {
 	orderRepository := repository.NewRepository()
 

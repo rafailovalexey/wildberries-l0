@@ -2,11 +2,13 @@ module github.com/emptyhopes/orders-publisher
 
 go 1.19
 
-require github.com/nats-io/stan.go v0.10.4
+require (
+	github.com/google/uuid v1.4.0
+	github.com/nats-io/stan.go v0.10.4
+)
 
 require (
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/google/uuid v1.4.0 // indirect
 	github.com/klauspost/compress v1.17.2 // indirect
 	github.com/nats-io/nats-server/v2 v2.10.4 // indirect
 	github.com/nats-io/nats-streaming-server v0.25.5 // indirect
