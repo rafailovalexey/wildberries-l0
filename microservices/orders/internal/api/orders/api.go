@@ -13,6 +13,10 @@ type api struct{}
 
 var _ def.OrdersApiInterface = &api{}
 
+func NewApi() *api {
+	return &api{}
+}
+
 /*
 OrdersHandler
 Использовал парсинг URL, для того, чтобы добиться REST поведения

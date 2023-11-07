@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/emptyhopes/orders/cmd/http-server/interceptor"
 	"github.com/emptyhopes/orders/cmd/http-server/middleware"
-	"github.com/emptyhopes/orders/internal/api/orders"
+	api "github.com/emptyhopes/orders/internal/api/orders"
 	"log"
 	"net/http"
 	"os"
@@ -18,9 +18,9 @@ func Run() {
 		middleware.AuthenticationMiddleware,
 	)
 
-	Orders := &orders.Api{}
+	orderApi := api.NewApi()
 
-	router.Handle("/v1/orders/", middlewares(http.HandlerFunc(Orders.OrdersHandler)))
+	router.Handle("/v1/orders/", middlewares(http.HandlerFunc(orderApi.OrdersHandler)))
 
 	hostname := os.Getenv("HOSTNAME")
 
