@@ -16,27 +16,27 @@ services:
       dockerfile: "application.dockerfile"
 
   orders-subscriber:
-    container_name: "orders-publisher"
-    hostname: "orders-publisher"
+    container_name: "orders_publisher"
+    hostname: "orders_publisher"
     restart: "always"
     networks:
       - "network"
     env_file:
-      - "../microservices/orders-subscriber/.env"
+      - "../microservices/orders_subscriber/.env"
     build:
-      context: "../microservices/orders-subscriber"
+      context: "../microservices/orders_subscriber"
       dockerfile: "subscriber.dockerfile"
 
   orders-publisher:
-    container_name: "orders-publisher"
-    hostname: "orders-publisher"
+    container_name: "orders_publisher"
+    hostname: "orders_publisher"
     restart: "always"
     networks:
       - "network"
     env_file:
-      - "../microservices/orders-publisher/.env"
+      - "../microservices/orders_publisher/.env"
     build:
-      context: "../microservices/orders-publisher"
+      context: "../microservices/orders_publisher"
       dockerfile: "publisher.dockerfile"
 
 networks:

@@ -2,21 +2,29 @@ package application
 
 import (
 	"context"
-	"fmt"
-	httpServer "github.com/emptyhopes/orders/cmd/http-server"
+	httpServer "github.com/emptyhopes/orders/cmd/http_server"
 	"github.com/emptyhopes/orders/internal/provider"
 	orderProvider "github.com/emptyhopes/orders/internal/provider/orders"
 	"github.com/joho/godotenv"
 )
 
-type Application struct {
+type ApplicationInterface interface {
+	InitializeDependency(ctx context.Context) error
+	InitializeEnvironment(_ context.Context) error
+	InitializeProvider(_ context.Context) error
+	Run()
+}
+
+type application struct {
 	orderProvider provider.OrderProviderInterface
 }
 
-func NewApplication(ctx context.Context) (*Application, error) {
-	application := &Application{}
+var _ ApplicationInterface = (*application)(nil)
 
-	err := application.initializeDependency(ctx)
+func NewApplication(ctx context.Context) (*application, error) {
+	application := &application{}
+
+	err := application.InitializeDependency(ctx)
 
 	if err != nil {
 		return nil, err
@@ -25,10 +33,10 @@ func NewApplication(ctx context.Context) (*Application, error) {
 	return application, nil
 }
 
-func (a *Application) initializeDependency(ctx context.Context) error {
+func (a *application) InitializeDependency(ctx context.Context) error {
 	inits := []func(context.Context) error{
-		a.initializeEnvironment,
-		a.initializeProvider,
+		a.InitializeEnvironment,
+		a.InitializeProvider,
 	}
 
 	for _, function := range inits {
@@ -42,7 +50,7 @@ func (a *Application) initializeDependency(ctx context.Context) error {
 	return nil
 }
 
-func (a *Application) initializeEnvironment(_ context.Context) error {
+func (a *application) InitializeEnvironment(_ context.Context) error {
 	err := godotenv.Load(".env")
 
 	if err != nil {
@@ -52,16 +60,14 @@ func (a *Application) initializeEnvironment(_ context.Context) error {
 	return nil
 }
 
-func (a *Application) initializeProvider(_ context.Context) error {
+func (a *application) InitializeProvider(_ context.Context) error {
 	a.orderProvider = orderProvider.NewOrderProvider()
 
 	return nil
 }
 
-func (a *Application) Run() {
+func (a *application) Run() {
 	api := a.orderProvider.GetOrderApi()
-
-	fmt.Println(api)
 
 	httpServer.Run(api)
 }

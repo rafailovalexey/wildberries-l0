@@ -20,7 +20,7 @@ type provider struct {
 	orderConverter  converter.OrderConverterInterface
 }
 
-var _ defenition.OrderProviderInterface = &provider{}
+var _ defenition.OrderProviderInterface = (*provider)(nil)
 
 func NewOrderProvider() *provider {
 	return &provider{}

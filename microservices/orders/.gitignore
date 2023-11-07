@@ -8,4 +8,4 @@ bin
 .env
 
 # Mocks
-mock-*.go
+*_mock.go
