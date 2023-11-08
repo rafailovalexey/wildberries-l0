@@ -41,7 +41,7 @@ func (v *validation) HandleOrderMessageValidation(dto *dto.OrderDto) error {
 func isValidUuid(id string, field string) error {
 	result := regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$`).MatchString(id)
 
-	if result {
+	if !result {
 		return errors.New(fmt.Sprintf("%s is not uuid", field))
 	}
 
