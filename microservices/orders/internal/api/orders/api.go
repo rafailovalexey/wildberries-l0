@@ -39,9 +39,9 @@ func (a *api) OrdersHandler(response http.ResponseWriter, request *http.Request)
 			return
 		}
 
-		http.Error(response, "несуществующий URL", http.StatusNotFound)
+		http.Error(response, getErrorJson("несуществующий URL"), http.StatusNotFound)
 	default:
-		http.Error(response, "несуществующий http метод", http.StatusMethodNotAllowed)
+		http.Error(response, getErrorJson("несуществующий http метод"), http.StatusMethodNotAllowed)
 	}
 }
 
@@ -49,7 +49,7 @@ func (a *api) GetOrderById(response http.ResponseWriter, request *http.Request) 
 	segments := strings.Split(request.URL.Path, "/")
 
 	if len(segments) != 4 || segments[1] != "v1" || segments[2] != "orders" {
-		http.Error(response, "неверный URL", http.StatusBadRequest)
+		http.Error(response, getErrorJson("неверный URL"), http.StatusBadRequest)
 
 		return
 	}
@@ -59,7 +59,7 @@ func (a *api) GetOrderById(response http.ResponseWriter, request *http.Request) 
 	err := a.orderValidation.GetOrderByIdValidation(id)
 
 	if err != nil {
-		http.Error(response, err.Error(), http.StatusBadRequest)
+		http.Error(response, getErrorJson(err.Error()), http.StatusBadRequest)
 
 		return
 	}
@@ -68,12 +68,12 @@ func (a *api) GetOrderById(response http.ResponseWriter, request *http.Request) 
 
 	if err != nil {
 		if strings.Contains(err.Error(), "no rows in result set") {
-			http.Error(response, fmt.Sprintf("пользователь не найден с order_uid: %s", id), http.StatusBadRequest)
+			http.Error(response, getErrorJson(fmt.Sprintf("пользователь не найден с order_uid: %s", id)), http.StatusBadRequest)
 
 			return
 		}
 
-		http.Error(response, err.Error(), http.StatusBadRequest)
+		http.Error(response, getErrorJson(err.Error()), http.StatusBadRequest)
 
 		return
 	}
@@ -81,7 +81,7 @@ func (a *api) GetOrderById(response http.ResponseWriter, request *http.Request) 
 	orderJson, err := json.Marshal(orderDto)
 
 	if err != nil {
-		http.Error(response, err.Error(), http.StatusInternalServerError)
+		http.Error(response, getErrorJson(err.Error()), http.StatusInternalServerError)
 
 		return
 	}
@@ -92,8 +92,12 @@ func (a *api) GetOrderById(response http.ResponseWriter, request *http.Request) 
 	_, err = response.Write(orderJson)
 
 	if err != nil {
-		http.Error(response, err.Error(), http.StatusInternalServerError)
+		http.Error(response, getErrorJson(err.Error()), http.StatusInternalServerError)
 
 		return
 	}
+}
+
+func getErrorJson(message string) string {
+	return fmt.Sprintf("{\"error\":\"%s\"}", message)
 }
