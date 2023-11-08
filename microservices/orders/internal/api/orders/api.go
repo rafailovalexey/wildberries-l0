@@ -5,19 +5,22 @@ import (
 	"fmt"
 	definition "github.com/emptyhopes/orders/internal/api"
 	"github.com/emptyhopes/orders/internal/service"
+	"github.com/emptyhopes/orders/internal/validation"
 	"net/http"
 	"strings"
 )
 
 type api struct {
-	orderService service.OrderServiceInterface
+	orderValidation validation.OrderValidationInterface
+	orderService    service.OrderServiceInterface
 }
 
 var _ definition.OrderApiInterface = (*api)(nil)
 
-func NewOrderApi(orderService service.OrderServiceInterface) *api {
+func NewOrderApi(orderValidation validation.OrderValidationInterface, orderService service.OrderServiceInterface) *api {
 	return &api{
-		orderService: orderService,
+		orderValidation: orderValidation,
+		orderService:    orderService,
 	}
 }
 
@@ -53,6 +56,14 @@ func (a *api) GetOrderById(response http.ResponseWriter, request *http.Request) 
 
 	id := segments[3]
 
+	err := a.orderValidation.GetOrderByIdValidation(id)
+
+	if err != nil {
+		http.Error(response, err.Error(), http.StatusBadRequest)
+
+		return
+	}
+
 	orderDto, err := a.orderService.GetOrderById(id)
 
 	if err != nil {
@@ -75,7 +86,7 @@ func (a *api) GetOrderById(response http.ResponseWriter, request *http.Request) 
 		return
 	}
 
-	response.Header().Set("Content-Type", "publisher/json")
+	response.Header().Set("Content-Type", "application/json")
 	response.WriteHeader(http.StatusOK)
 
 	_, err = response.Write(orderJson)
