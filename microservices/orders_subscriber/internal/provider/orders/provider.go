@@ -10,11 +10,14 @@ import (
 	orderRepository "github.com/emptyhopes/orders_subscriber/internal/repository/orders"
 	"github.com/emptyhopes/orders_subscriber/internal/service"
 	orderService "github.com/emptyhopes/orders_subscriber/internal/service/orders"
+	"github.com/emptyhopes/orders_subscriber/internal/validation"
+	orderValidation "github.com/emptyhopes/orders_subscriber/internal/validation/orders"
 	"github.com/emptyhopes/orders_subscriber/storage"
 )
 
 type provider struct {
 	orderController controller.OrderControllerInterface
+	orderValidation validation.OrderValidationInterface
 	orderService    service.OrderServiceInterface
 	orderRepository repository.OrderRepositoryInterface
 	orderConverter  converter.OrderConverterInterface
@@ -29,11 +32,20 @@ func NewOrderProvider() *provider {
 func (p *provider) GetOrderController() controller.OrderControllerInterface {
 	if p.orderController == nil {
 		p.orderController = orderController.NewOrderController(
+			p.GetOrderValidation(),
 			p.GetOrderService(),
 		)
 	}
 
 	return p.orderController
+}
+
+func (p *provider) GetOrderValidation() validation.OrderValidationInterface {
+	if p.orderValidation == nil {
+		p.orderValidation = orderValidation.NewOrderValidation()
+	}
+
+	return p.orderValidation
 }
 
 func (p *provider) GetOrderService() service.OrderServiceInterface {

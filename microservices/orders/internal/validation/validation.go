@@ -1,5 +1,5 @@
 package validation
 
 type OrderValidationInterface interface {
-	GetOrderByIdValidation(id string) error
+	GetOrderByIdValidation(string) error
 }

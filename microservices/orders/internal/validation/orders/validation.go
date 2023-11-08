@@ -2,6 +2,7 @@ package orders
 
 import (
 	"errors"
+	"fmt"
 	definition "github.com/emptyhopes/orders/internal/validation"
 	"regexp"
 )
@@ -15,13 +16,19 @@ func NewOrderValidation() *validation {
 }
 
 func (v *validation) GetOrderByIdValidation(id string) error {
-	if !isValidUuid(id) {
-		return errors.New("id is not uuid")
+	if err := isValidUuid(id, "order_uid"); err != nil {
+		return err
 	}
 
 	return nil
 }
 
-func isValidUuid(id string) bool {
-	return regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$`).MatchString(id)
+func isValidUuid(id string, field string) error {
+	result := regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$`).MatchString(id)
+
+	if result {
+		return errors.New(fmt.Sprintf("%s is not uuid", field))
+	}
+
+	return nil
 }

@@ -6,18 +6,21 @@ import (
 	definition "github.com/emptyhopes/orders_subscriber/internal/controller"
 	dto "github.com/emptyhopes/orders_subscriber/internal/dto/orders"
 	"github.com/emptyhopes/orders_subscriber/internal/service"
+	"github.com/emptyhopes/orders_subscriber/internal/validation"
 	"github.com/nats-io/stan.go"
 )
 
 type controller struct {
-	orderService service.OrderServiceInterface
+	orderValidation validation.OrderValidationInterface
+	orderService    service.OrderServiceInterface
 }
 
 var _ definition.OrderControllerInterface = (*controller)(nil)
 
-func NewOrderController(orderService service.OrderServiceInterface) *controller {
+func NewOrderController(orderValidation validation.OrderValidationInterface, orderService service.OrderServiceInterface) *controller {
 	return &controller{
-		orderService: orderService,
+		orderValidation: orderValidation,
+		orderService:    orderService,
 	}
 }
 
@@ -28,6 +31,14 @@ func (c *controller) HandleOrderMessage(message *stan.Msg) {
 
 	if err != nil {
 		fmt.Printf("произошла ошибка парсинга %v\n", err)
+
+		return
+	}
+
+	err = c.orderValidation.HandleOrderMessageValidation(&order)
+
+	if err != nil {
+		fmt.Printf("произошла ошибка валидации %v\n", err)
 
 		return
 	}
