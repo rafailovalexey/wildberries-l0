@@ -9,20 +9,16 @@ services:
       - "3000:3000"
     networks:
       - "network"
-    env_file:
-      - "../microservices/orders/.env"
     build:
       context: "../microservices/orders"
       dockerfile: "application.dockerfile"
 
   orders-subscriber:
-    container_name: "orders_publisher"
-    hostname: "orders_publisher"
+    container_name: "orders_subscriber"
+    hostname: "orders_subscriber"
     restart: "always"
     networks:
       - "network"
-    env_file:
-      - "../microservices/orders_subscriber/.env"
     build:
       context: "../microservices/orders_subscriber"
       dockerfile: "subscriber.dockerfile"
@@ -33,8 +29,6 @@ services:
     restart: "always"
     networks:
       - "network"
-    env_file:
-      - "../microservices/orders_publisher/.env"
     build:
       context: "../microservices/orders_publisher"
       dockerfile: "publisher.dockerfile"

@@ -3,6 +3,3 @@ bin
 
 # JetBrains
 .idea
-
-# Environment
-.env
