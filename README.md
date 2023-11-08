@@ -1,1 +1,1 @@
-wb - l0
+wildberries - L0
