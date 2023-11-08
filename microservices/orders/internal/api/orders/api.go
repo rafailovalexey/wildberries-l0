@@ -68,7 +68,7 @@ func (a *api) GetOrderById(response http.ResponseWriter, request *http.Request) 
 
 	if err != nil {
 		if strings.Contains(err.Error(), "no rows in result set") {
-			http.Error(response, getErrorJson(fmt.Sprintf("пользователь не найден с order_uid: %s", id)), http.StatusBadRequest)
+			http.Error(response, getErrorJson(fmt.Sprintf("заказ не найден с order_uid: %s", id)), http.StatusBadRequest)
 
 			return
 		}
