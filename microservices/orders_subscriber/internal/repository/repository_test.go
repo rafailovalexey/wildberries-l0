@@ -2,8 +2,9 @@ package repository
 
 import (
 	"errors"
-	dto "github.com/emptyhopes/orders/internal/dto/orders"
-	mockRepository "github.com/emptyhopes/orders/internal/repository/mocks"
+	dto "github.com/emptyhopes/orders_subscriber/internal/dto/orders"
+	mockRepository "github.com/emptyhopes/orders_subscriber/internal/repository/mocks"
+	"github.com/emptyhopes/orders_subscriber/storage"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
@@ -12,26 +13,22 @@ import (
 	"time"
 )
 
-func TestRepositorySetOrderCache(t *testing.T) {
+func TestRepositoryGetOrdersCache(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	repository := mockRepository.NewMockOrderRepositoryInterface(ctrl)
 
-	id := "4ca5aa9b-ced2-4f9f-8ffb-526bf1ab9469"
-	orderDto := getStubOrderDto()
+	cache := storage.NewCache()
 
-	repository.EXPECT().SetOrderCache(id, orderDto).Return()
-	repository.SetOrderCache(id, orderDto)
+	cacheItems := cache.GetCache()
 
-	repository.EXPECT().GetOrderCacheById(id).Return(orderDto, true)
-	orderCached, isExist := repository.GetOrderCacheById(id)
+	repository.EXPECT().GetOrdersCache().Return(cacheItems)
+	cacheItemsWithRepository := repository.GetOrdersCache()
 
-	if !reflect.TypeOf(orderCached).AssignableTo(reflect.TypeOf(&dto.OrderDto{})) {
-		t.Errorf("orderCached has the wrong type")
+	if !reflect.TypeOf(cacheItemsWithRepository).AssignableTo(reflect.TypeOf(&map[string]storage.CacheItem{})) {
+		t.Errorf("cacheItemsWithRepository has the wrong type")
 	}
-
-	require.True(t, isExist)
 }
 
 func TestRepositoryGetOrderCacheByIdWithUncachedId(t *testing.T) {
@@ -43,7 +40,6 @@ func TestRepositoryGetOrderCacheByIdWithUncachedId(t *testing.T) {
 	id := "4ca5aa9b-ced2-4f9f-8ffb-526bf1ab9469"
 
 	repository.EXPECT().GetOrderCacheById(id).Return(nil, false)
-
 	order, isExist := repository.GetOrderCacheById(id)
 
 	require.Nil(t, order)
@@ -72,22 +68,7 @@ func TestRepositoryGetOrderCacheByIdWithCachedId(t *testing.T) {
 	require.True(t, isExist)
 }
 
-func TestRepositoryGetOrderByIdWithError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	repository := mockRepository.NewMockOrderRepositoryInterface(ctrl)
-
-	id := "4ca5aa9b-ced2-4f9f-8ffb-526bf1ab9469"
-
-	repository.EXPECT().GetOrderById(id).Return(nil, errors.New("no rows expected"))
-	order, err := repository.GetOrderById(id)
-
-	require.Nil(t, order)
-	require.Error(t, err, "no rows expected")
-}
-
-func TestRepositoryGetOrderByIdWithoutError(t *testing.T) {
+func TestRepositorySetOrderCache(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -96,12 +77,74 @@ func TestRepositoryGetOrderByIdWithoutError(t *testing.T) {
 	id := "4ca5aa9b-ced2-4f9f-8ffb-526bf1ab9469"
 	orderDto := getStubOrderDto()
 
-	repository.EXPECT().GetOrderById(id).Return(orderDto, nil)
-	order, err := repository.GetOrderById(id)
+	repository.EXPECT().SetOrderCache(id, orderDto).Return()
+	repository.SetOrderCache(id, orderDto)
 
-	if !reflect.TypeOf(order).AssignableTo(reflect.TypeOf(&dto.OrderDto{})) {
-		t.Errorf("order has the wrong type")
+	repository.EXPECT().GetOrderCacheById(id).Return(orderDto, true)
+	orderCached, isExist := repository.GetOrderCacheById(id)
+
+	if !reflect.TypeOf(orderCached).AssignableTo(reflect.TypeOf(&dto.OrderDto{})) {
+		t.Errorf("orderCached has the wrong type")
 	}
+
+	require.True(t, isExist)
+}
+
+func TestRepositoryDeleteOrderCache(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	repository := mockRepository.NewMockOrderRepositoryInterface(ctrl)
+
+	id := "4ca5aa9b-ced2-4f9f-8ffb-526bf1ab9469"
+	orderDto := getStubOrderDto()
+
+	repository.EXPECT().SetOrderCache(id, orderDto).Return()
+	repository.SetOrderCache(id, orderDto)
+
+	repository.EXPECT().GetOrderCacheById(id).Return(orderDto, true)
+	orderCached, isExist := repository.GetOrderCacheById(id)
+
+	if !reflect.TypeOf(orderCached).AssignableTo(reflect.TypeOf(&dto.OrderDto{})) {
+		t.Errorf("orderCached has the wrong type")
+	}
+
+	require.True(t, isExist)
+
+	repository.EXPECT().DeleteOrderCacheById(id).Return()
+	repository.DeleteOrderCacheById(id)
+
+	repository.EXPECT().GetOrderCacheById(id).Return(nil, false)
+	orderCachedAfterDelete, isExist := repository.GetOrderCacheById(id)
+
+	require.Nil(t, orderCachedAfterDelete)
+	require.False(t, isExist)
+}
+
+func TestRepositoryCreateOrderWithError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	repository := mockRepository.NewMockOrderRepositoryInterface(ctrl)
+
+	orderDto := getStubOrderDto()
+
+	repository.EXPECT().CreateOrder(orderDto).Return(errors.New(""))
+	err := repository.CreateOrder(orderDto)
+
+	require.Error(t, err)
+}
+
+func TestRepositoryCreateOrderWithoutError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	repository := mockRepository.NewMockOrderRepositoryInterface(ctrl)
+
+	orderDto := getStubOrderDto()
+
+	repository.EXPECT().CreateOrder(orderDto).Return(nil)
+	err := repository.CreateOrder(orderDto)
 
 	require.Nil(t, err)
 }

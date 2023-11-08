@@ -1,9 +1,8 @@
-package service
+package repository
 
 import (
-	"errors"
-	dto "github.com/emptyhopes/orders/internal/dto/orders"
-	mockService "github.com/emptyhopes/orders/internal/service/mocks"
+	dto "github.com/emptyhopes/orders_publisher/internal/dto/orders"
+	mockRepository "github.com/emptyhopes/orders_publisher/internal/repository/mocks"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
@@ -12,38 +11,46 @@ import (
 	"time"
 )
 
-func TestServiceGetOrderByIdWithError(t *testing.T) {
+func TestRepositoryGetOrder(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
 
-	service := mockService.NewMockOrderServiceInterface(ctrl)
+	repository := mockRepository.NewMockOrderRepositoryInterface(ctrl)
 
-	id := "4ca5aa9b-ced2-4f9f-8ffb-526bf1ab9469"
-
-	service.EXPECT().GetOrderById(id).Return(nil, errors.New("error"))
-	order, err := service.GetOrderById(id)
-
-	require.Nil(t, order)
-	require.Error(t, err)
-}
-
-func TestServiceGetOrderByIdWithoutError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	service := mockService.NewMockOrderServiceInterface(ctrl)
-
-	id := "4ca5aa9b-ced2-4f9f-8ffb-526bf1ab9469"
 	orderDto := getStubOrderDto()
 
-	service.EXPECT().GetOrderById(id).Return(orderDto, nil)
-	order, err := service.GetOrderById(id)
+	repository.EXPECT().GetOrder().Return(orderDto)
+	order := repository.GetOrder()
 
 	if !reflect.TypeOf(order).AssignableTo(reflect.TypeOf(&dto.OrderDto{})) {
-		t.Errorf("order has the wrong type")
+		t.Errorf("orderCached has the wrong type")
 	}
 
-	require.Nil(t, err)
+	require.NotNil(t, order)
+}
+
+func getStubOrderDto() *dto.OrderDto {
+	delivery := getStubOrderDeliveryDto()
+	payment := getStubOrderPaymentDto()
+	items := getStubOrderItemsDto()
+
+	order := dto.NewOrderDto(
+		uuid.New().String(),
+		"WBILMTESTTRACK",
+		"WBIL",
+		delivery,
+		payment,
+		items,
+		"en",
+		"1",
+		"test",
+		"meest",
+		"9",
+		99,
+		time.Now().Unix(),
+		"1",
+	)
+
+	return order
 }
 
 func getStubOrderDeliveryDto() *dto.OrderDeliveryDto {
@@ -108,29 +115,4 @@ func getStubOrderItemsDto() *dto.OrderItemsDto {
 	)
 
 	return items
-}
-
-func getStubOrderDto() *dto.OrderDto {
-	delivery := getStubOrderDeliveryDto()
-	payment := getStubOrderPaymentDto()
-	items := getStubOrderItemsDto()
-
-	order := dto.NewOrderDto(
-		uuid.New().String(),
-		"WBILMTESTTRACK",
-		"WBIL",
-		delivery,
-		payment,
-		items,
-		"en",
-		"1",
-		"test",
-		"meest",
-		"9",
-		99,
-		time.Now().Unix(),
-		"1",
-	)
-
-	return order
 }

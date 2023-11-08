@@ -26,7 +26,7 @@ func (s *service) HandleOrderMessage(order *dto.OrderDto) {
 
 	ordersCache := s.orderRepository.GetOrdersCache()
 
-	for _, value := range ordersCache {
+	for _, value := range *ordersCache {
 		orderDto, isExist := value.Data.(*dto.OrderDto)
 
 		if !isExist {

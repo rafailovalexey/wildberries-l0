@@ -33,7 +33,7 @@ func NewOrderRepository(
 	}
 }
 
-func (r *repository) GetOrdersCache() map[string]storage.CacheItem {
+func (r *repository) GetOrdersCache() *map[string]storage.CacheItem {
 	return r.cache.GetCache()
 }
 

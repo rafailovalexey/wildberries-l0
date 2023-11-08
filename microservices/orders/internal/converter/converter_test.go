@@ -18,10 +18,10 @@ func TestConverterMapOrderDtoToOrderModel(t *testing.T) {
 
 	converter := mockConverter.NewMockOrderConverterInterface(ctrl)
 
-	orderDto := getSubOrderDto()
+	orderDto := getStubOrderDto()
 	deliveryUid := ""
 	paymentUid := ""
-	orderModel := getSubOrderModel()
+	orderModel := getStubOrderModel()
 
 	converter.EXPECT().MapOrderDtoToOrderModel(orderDto, deliveryUid, paymentUid).Return(orderModel)
 	order := converter.MapOrderDtoToOrderModel(orderDto, deliveryUid, paymentUid)
@@ -39,8 +39,8 @@ func TestConverterMapOrderPaymentDtoToOrderPaymentModel(t *testing.T) {
 
 	converter := mockConverter.NewMockOrderConverterInterface(ctrl)
 
-	orderPaymentDto := getSubOrderPaymentDto()
-	orderPaymentModel := getSubOrderPaymentModel()
+	orderPaymentDto := getStubOrderPaymentDto()
+	orderPaymentModel := getStubOrderPaymentModel()
 
 	converter.EXPECT().MapOrderPaymentDtoToOrderPaymentModel(orderPaymentDto).Return(orderPaymentModel)
 	order := converter.MapOrderPaymentDtoToOrderPaymentModel(orderPaymentDto)
@@ -58,8 +58,8 @@ func TestConverterMapOrderDeliveryDtoToOrderDeliveryModel(t *testing.T) {
 
 	converter := mockConverter.NewMockOrderConverterInterface(ctrl)
 
-	orderDeliveryDto := getSubOrderDeliveryDto()
-	orderDeliveryModel := getSubOrderDeliveryModel()
+	orderDeliveryDto := getStubOrderDeliveryDto()
+	orderDeliveryModel := getStubOrderDeliveryModel()
 
 	converter.EXPECT().MapOrderDeliveryDtoToOrderDeliveryModel(orderDeliveryDto).Return(orderDeliveryModel)
 	order := converter.MapOrderDeliveryDtoToOrderDeliveryModel(orderDeliveryDto)
@@ -77,8 +77,8 @@ func TestConverterMapOrderItemDtoToOrderItemModel(t *testing.T) {
 
 	converter := mockConverter.NewMockOrderConverterInterface(ctrl)
 
-	orderItemDto := getSubOrderItemDto()
-	orderItemModel := getSubOrderItemModel()
+	orderItemDto := getStubOrderItemDto()
+	orderItemModel := getStubOrderItemModel()
 	orderUid := ""
 
 	converter.EXPECT().MapOrderItemDtoToOrderItemModel(orderItemDto, orderUid).Return(orderItemModel)
@@ -97,8 +97,8 @@ func TestConverterMapOrderItemsDtoToOrderItemsModel(t *testing.T) {
 
 	converter := mockConverter.NewMockOrderConverterInterface(ctrl)
 
-	orderItemsDto := getSubOrderItemsDto()
-	orderItemsModel := getSubOrderItemsModel()
+	orderItemsDto := getStubOrderItemsDto()
+	orderItemsModel := getStubOrderItemsModel()
 	orderUid := ""
 
 	converter.EXPECT().MapOrderItemsDtoToOrderItemsModel(orderItemsDto, orderUid).Return(orderItemsModel)
@@ -117,11 +117,11 @@ func TestConverterMapOrderModelToOrderDto(t *testing.T) {
 
 	converter := mockConverter.NewMockOrderConverterInterface(ctrl)
 
-	orderModel := getSubOrderModel()
-	orderDeliveryModel := getSubOrderDeliveryModel()
-	orderPaymentModel := getSubOrderPaymentModel()
-	orderItemsModel := getSubOrderItemsModel()
-	orderDto := getSubOrderDto()
+	orderModel := getStubOrderModel()
+	orderDeliveryModel := getStubOrderDeliveryModel()
+	orderPaymentModel := getStubOrderPaymentModel()
+	orderItemsModel := getStubOrderItemsModel()
+	orderDto := getStubOrderDto()
 
 	converter.EXPECT().MapOrderModelToOrderDto(orderModel, orderDeliveryModel, orderPaymentModel, orderItemsModel).Return(orderDto)
 	order := converter.MapOrderModelToOrderDto(orderModel, orderDeliveryModel, orderPaymentModel, orderItemsModel)
@@ -139,8 +139,8 @@ func TestConverterMapOrderPaymentModelToOrderPaymentDto(t *testing.T) {
 
 	converter := mockConverter.NewMockOrderConverterInterface(ctrl)
 
-	orderPaymentModel := getSubOrderPaymentModel()
-	orderPaymentDto := getSubOrderPaymentDto()
+	orderPaymentModel := getStubOrderPaymentModel()
+	orderPaymentDto := getStubOrderPaymentDto()
 
 	converter.EXPECT().MapOrderPaymentModelToOrderPaymentDto(orderPaymentModel).Return(orderPaymentDto)
 	order := converter.MapOrderPaymentModelToOrderPaymentDto(orderPaymentModel)
@@ -158,8 +158,8 @@ func TestConverterMapOrderDeliveryModelToOrderDeliveryDto(t *testing.T) {
 
 	converter := mockConverter.NewMockOrderConverterInterface(ctrl)
 
-	orderDeliveryModel := getSubOrderDeliveryModel()
-	orderDeliveryDto := getSubOrderDeliveryDto()
+	orderDeliveryModel := getStubOrderDeliveryModel()
+	orderDeliveryDto := getStubOrderDeliveryDto()
 
 	converter.EXPECT().MapOrderDeliveryModelToOrderDeliveryDto(orderDeliveryModel).Return(orderDeliveryDto)
 	order := converter.MapOrderDeliveryModelToOrderDeliveryDto(orderDeliveryModel)
@@ -177,8 +177,8 @@ func TestConverterMapOrderItemModelToOrderItemDto(t *testing.T) {
 
 	converter := mockConverter.NewMockOrderConverterInterface(ctrl)
 
-	orderItemModel := getSubOrderItemModel()
-	orderItemDto := getSubOrderItemDto()
+	orderItemModel := getStubOrderItemModel()
+	orderItemDto := getStubOrderItemDto()
 
 	converter.EXPECT().MapOrderItemModelToOrderItemDto(orderItemModel).Return(orderItemDto)
 	order := converter.MapOrderItemModelToOrderItemDto(orderItemModel)
@@ -196,8 +196,8 @@ func TestConverterMapOrderItemsModelToOrderItemsDto(t *testing.T) {
 
 	converter := mockConverter.NewMockOrderConverterInterface(ctrl)
 
-	orderItemsModel := getSubOrderItemsModel()
-	orderItemsDto := getSubOrderItemsDto()
+	orderItemsModel := getStubOrderItemsModel()
+	orderItemsDto := getStubOrderItemsDto()
 
 	converter.EXPECT().MapOrderItemsModelToOrderItemsDto(orderItemsModel).Return(orderItemsDto)
 	order := converter.MapOrderItemsModelToOrderItemsDto(orderItemsModel)
@@ -209,10 +209,10 @@ func TestConverterMapOrderItemsModelToOrderItemsDto(t *testing.T) {
 	require.NotNil(t, order)
 }
 
-func getSubOrderDto() *dto.OrderDto {
-	delivery := getSubOrderDeliveryDto()
-	payment := getSubOrderPaymentDto()
-	items := getSubOrderItemsDto()
+func getStubOrderDto() *dto.OrderDto {
+	delivery := getStubOrderDeliveryDto()
+	payment := getStubOrderPaymentDto()
+	items := getStubOrderItemsDto()
 
 	order := dto.NewOrderDto(
 		uuid.New().String(),
@@ -234,7 +234,7 @@ func getSubOrderDto() *dto.OrderDto {
 	return order
 }
 
-func getSubOrderDeliveryDto() *dto.OrderDeliveryDto {
+func getStubOrderDeliveryDto() *dto.OrderDeliveryDto {
 	delivery := dto.NewOrderDeliveryDto(
 		"Test Testov",
 		"+9720000000",
@@ -248,7 +248,7 @@ func getSubOrderDeliveryDto() *dto.OrderDeliveryDto {
 	return delivery
 }
 
-func getSubOrderPaymentDto() *dto.OrderPaymentDto {
+func getStubOrderPaymentDto() *dto.OrderPaymentDto {
 	payment := dto.NewOrderPaymentDto(
 		uuid.New().String(),
 		"1",
@@ -265,7 +265,7 @@ func getSubOrderPaymentDto() *dto.OrderPaymentDto {
 	return payment
 }
 
-func getSubOrderItemDto() *dto.OrderItemDto {
+func getStubOrderItemDto() *dto.OrderItemDto {
 	item := dto.NewOrderItemDto(
 		"WBILMTESTTRACK",
 		453,
@@ -282,11 +282,11 @@ func getSubOrderItemDto() *dto.OrderItemDto {
 	return item
 }
 
-func getSubOrderItemsDto() *dto.OrderItemsDto {
-	item1 := getSubOrderItemDto()
-	item2 := getSubOrderItemDto()
-	item3 := getSubOrderItemDto()
-	item4 := getSubOrderItemDto()
+func getStubOrderItemsDto() *dto.OrderItemsDto {
+	item1 := getStubOrderItemDto()
+	item2 := getStubOrderItemDto()
+	item3 := getStubOrderItemDto()
+	item4 := getStubOrderItemDto()
 
 	items := dto.NewOrderItemsDto(
 		item1,
@@ -298,7 +298,7 @@ func getSubOrderItemsDto() *dto.OrderItemsDto {
 	return items
 }
 
-func getSubOrderModel() *model.OrderModel {
+func getStubOrderModel() *model.OrderModel {
 	order := model.NewOrderModel(
 		"",
 		"",
@@ -318,7 +318,7 @@ func getSubOrderModel() *model.OrderModel {
 	return order
 }
 
-func getSubOrderDeliveryModel() *model.OrderDeliveryModel {
+func getStubOrderDeliveryModel() *model.OrderDeliveryModel {
 	delivery := model.NewOrderDeliveryModel(
 		"",
 		"",
@@ -333,7 +333,7 @@ func getSubOrderDeliveryModel() *model.OrderDeliveryModel {
 	return delivery
 }
 
-func getSubOrderPaymentModel() *model.OrderPaymentModel {
+func getStubOrderPaymentModel() *model.OrderPaymentModel {
 	payment := model.NewOrderPaymentModel(
 		"",
 		"",
@@ -351,7 +351,7 @@ func getSubOrderPaymentModel() *model.OrderPaymentModel {
 	return payment
 }
 
-func getSubOrderItemModel() *model.OrderItemModel {
+func getStubOrderItemModel() *model.OrderItemModel {
 	item := model.NewOrderItemModel(
 		0,
 		"",
@@ -370,11 +370,11 @@ func getSubOrderItemModel() *model.OrderItemModel {
 	return item
 }
 
-func getSubOrderItemsModel() *model.OrderItemsModel {
-	item1 := getSubOrderItemModel()
-	item2 := getSubOrderItemModel()
-	item3 := getSubOrderItemModel()
-	item4 := getSubOrderItemModel()
+func getStubOrderItemsModel() *model.OrderItemsModel {
+	item1 := getStubOrderItemModel()
+	item2 := getStubOrderItemModel()
+	item3 := getStubOrderItemModel()
+	item4 := getStubOrderItemModel()
 
 	items := model.NewOrderItemsModel(
 		item1,

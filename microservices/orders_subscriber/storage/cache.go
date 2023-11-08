@@ -6,7 +6,7 @@ import (
 )
 
 type CacheInterface interface {
-	GetCache() map[string]CacheItem
+	GetCache() *map[string]CacheItem
 	Get(string) (any, bool)
 	Set(string, any, time.Duration)
 	Delete(string)
@@ -34,8 +34,8 @@ func NewCache() *cache {
 	return cache
 }
 
-func (c *cache) GetCache() map[string]CacheItem {
-	return c.items
+func (c *cache) GetCache() *map[string]CacheItem {
+	return &c.items
 }
 
 func (c *cache) Get(key string) (any, bool) {

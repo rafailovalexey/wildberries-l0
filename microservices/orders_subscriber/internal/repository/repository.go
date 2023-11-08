@@ -6,7 +6,7 @@ import (
 )
 
 type OrderRepositoryInterface interface {
-	GetOrdersCache() map[string]storage.CacheItem
+	GetOrdersCache() *map[string]storage.CacheItem
 	GetOrderCacheById(string) (*dto.OrderDto, bool)
 	SetOrderCache(string, *dto.OrderDto)
 	DeleteOrderCacheById(id string)

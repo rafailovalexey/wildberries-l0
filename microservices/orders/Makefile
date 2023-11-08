@@ -11,6 +11,6 @@ generate:
 	mockgen -source=internal/converter/converter.go -destination=internal/converter/mocks/converter_mock.go
 
 tests:
-	go test ./...
+	go test -v ./...
 
 .PHONY: download, build, generate, tests
