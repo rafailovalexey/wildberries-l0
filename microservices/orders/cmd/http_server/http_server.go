@@ -15,6 +15,7 @@ func Run(orderApi api.OrderApiInterface) {
 
 	middlewares := middleware.ChainMiddleware(
 		interceptor.LoggingInterceptor,
+		middleware.CorsMiddleware,
 		middleware.AuthenticationMiddleware,
 	)
 
