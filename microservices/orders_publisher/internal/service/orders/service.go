@@ -2,7 +2,6 @@ package orders
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/emptyhopes/orders_publisher/internal/repository"
 	definition "github.com/emptyhopes/orders_publisher/internal/service"
 	"github.com/nats-io/stan.go"
@@ -37,6 +36,6 @@ func (s *service) PublishOrder(sc stan.Conn, subject string) {
 	}
 
 	if err == nil {
-		fmt.Printf("опубликовал сообщение с order_uid: %s\n", order.OrderUid)
+		log.Printf("опубликовал сообщение с order_uid: %s\n", order.OrderUid)
 	}
 }

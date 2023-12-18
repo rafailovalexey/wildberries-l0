@@ -2,12 +2,12 @@ package orders
 
 import (
 	"encoding/json"
-	"fmt"
 	definition "github.com/emptyhopes/orders_subscriber/internal/controller"
 	dto "github.com/emptyhopes/orders_subscriber/internal/dto/orders"
 	"github.com/emptyhopes/orders_subscriber/internal/service"
 	"github.com/emptyhopes/orders_subscriber/internal/validation"
 	"github.com/nats-io/stan.go"
+	"log"
 )
 
 type controller struct {
@@ -30,7 +30,7 @@ func (c *controller) HandleOrderMessage(message *stan.Msg) {
 	err := json.Unmarshal(message.Data, &order)
 
 	if err != nil {
-		fmt.Printf("произошла ошибка парсинга %v\n", err)
+		log.Printf("произошла ошибка парсинга %v\n", err)
 
 		return
 	}
@@ -38,7 +38,7 @@ func (c *controller) HandleOrderMessage(message *stan.Msg) {
 	err = c.orderValidation.HandleOrderMessageValidation(&order)
 
 	if err != nil {
-		fmt.Printf("произошла ошибка валидации %v\n", err)
+		log.Printf("произошла ошибка валидации %v\n", err)
 
 		return
 	}

@@ -1,10 +1,10 @@
 package orders
 
 import (
-	"fmt"
 	dto "github.com/emptyhopes/orders/internal/dto/orders"
 	"github.com/emptyhopes/orders/internal/repository"
 	definition "github.com/emptyhopes/orders/internal/service"
+	"log"
 )
 
 type service struct {
@@ -23,7 +23,7 @@ func (s *service) GetOrderById(id string) (*dto.OrderDto, error) {
 	orderCached, isExist := s.orderRepository.GetOrderCacheById(id)
 
 	if isExist {
-		fmt.Printf("пользователь получил данные из кэша по заказу с order_uid: %s\n", orderCached.OrderUid)
+		log.Printf("пользователь получил данные из кэша по заказу с order_uid: %s\n", orderCached.OrderUid)
 
 		return orderCached, nil
 	}
@@ -36,7 +36,7 @@ func (s *service) GetOrderById(id string) (*dto.OrderDto, error) {
 
 	s.orderRepository.SetOrderCache(orderDto.OrderUid, orderDto)
 
-	fmt.Printf("пользователь получил данные из базы данных по заказу с order_uid: %s\n", orderDto.OrderUid)
+	log.Printf("пользователь получил данные из базы данных по заказу с order_uid: %s\n", orderDto.OrderUid)
 
 	return orderDto, nil
 }

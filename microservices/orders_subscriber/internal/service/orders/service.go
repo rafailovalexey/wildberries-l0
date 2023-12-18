@@ -1,10 +1,10 @@
 package orders
 
 import (
-	"fmt"
 	dto "github.com/emptyhopes/orders_subscriber/internal/dto/orders"
 	"github.com/emptyhopes/orders_subscriber/internal/repository"
 	definition "github.com/emptyhopes/orders_subscriber/internal/service"
+	"log"
 )
 
 type service struct {
@@ -20,7 +20,7 @@ func NewOrderService(orderRepository repository.OrderRepositoryInterface) *servi
 }
 
 func (s *service) HandleOrderMessage(order *dto.OrderDto) {
-	fmt.Printf("добавил в кэш сообщение с order_uid: %s\n", order.OrderUid)
+	log.Printf("добавил в кэш сообщение с order_uid: %s\n", order.OrderUid)
 
 	s.orderRepository.SetOrderCache(order.OrderUid, order)
 
@@ -30,7 +30,7 @@ func (s *service) HandleOrderMessage(order *dto.OrderDto) {
 		orderDto, isExist := value.Data.(*dto.OrderDto)
 
 		if !isExist {
-			fmt.Printf("ошибка при приведение типа")
+			log.Printf("ошибка при приведение типа")
 
 			s.orderRepository.DeleteOrderCacheById(orderDto.OrderUid)
 
@@ -40,15 +40,15 @@ func (s *service) HandleOrderMessage(order *dto.OrderDto) {
 		err := s.orderRepository.CreateOrder(orderDto)
 
 		if err != nil {
-			fmt.Printf("ошибка при создание заказа %v\n", err)
+			log.Printf("ошибка при создание заказа %v\n", err)
 
 			return
 		}
 
-		fmt.Printf("обработал сообщение с order_uid: %s\n", order.OrderUid)
+		log.Printf("обработал сообщение с order_uid: %s\n", order.OrderUid)
 
 		s.orderRepository.DeleteOrderCacheById(orderDto.OrderUid)
 
-		fmt.Printf("удалил из кэша сообщение с order_uid: %s\n", order.OrderUid)
+		log.Printf("удалил из кэша сообщение с order_uid: %s\n", order.OrderUid)
 	}
 }

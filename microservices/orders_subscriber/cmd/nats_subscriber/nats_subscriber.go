@@ -1,7 +1,6 @@
 package nats_subscriber
 
 import (
-	"fmt"
 	"github.com/emptyhopes/orders_subscriber/internal/controller"
 	"github.com/nats-io/stan.go"
 	"log"
@@ -49,7 +48,7 @@ func subscribe(sc stan.Conn, subject string, queue string, handler stan.MsgHandl
 
 	defer sub.Unsubscribe()
 
-	fmt.Printf("подписался на очередь сообщений: %s\n", subject)
+	log.Printf("подписался на очередь сообщений: %s\n", subject)
 
 	channel := make(chan os.Signal, 1)
 	signal.Notify(channel, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)

@@ -1,7 +1,7 @@
 package interceptor
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"time"
 )
@@ -14,6 +14,6 @@ func LoggingInterceptor(next http.Handler) http.Handler {
 
 		duration := time.Since(start)
 
-		fmt.Printf("%s %s %s - %s %v\n", request.Method, request.URL.Path, request.RemoteAddr, request.UserAgent(), duration)
+		log.Printf("%s %s %s - %s %v\n", request.Method, request.URL.Path, request.RemoteAddr, request.UserAgent(), duration)
 	})
 }

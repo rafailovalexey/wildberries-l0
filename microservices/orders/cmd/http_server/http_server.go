@@ -35,7 +35,7 @@ func Run(orderApi api.OrderApiInterface) {
 
 	address := fmt.Sprintf("%s:%s", hostname, port)
 
-	fmt.Println(fmt.Sprintf("сервер запускается по адресу %s", address))
+	log.Printf("%s\n", fmt.Sprintf("сервер запускается по адресу %s", address))
 
 	err := http.ListenAndServe(address, router)
 
