@@ -30,7 +30,7 @@ func (c *controller) HandleOrderMessage(message *stan.Msg) {
 	err := json.Unmarshal(message.Data, &order)
 
 	if err != nil {
-		log.Printf("произошла ошибка парсинга %v\n", err)
+		log.Printf("a parsing error occurred %v\n", err)
 
 		return
 	}
@@ -38,7 +38,7 @@ func (c *controller) HandleOrderMessage(message *stan.Msg) {
 	err = c.orderValidation.HandleOrderMessageValidation(&order)
 
 	if err != nil {
-		log.Printf("произошла ошибка валидации %v\n", err)
+		log.Printf("a validation error occurred %v\n", err)
 
 		return
 	}

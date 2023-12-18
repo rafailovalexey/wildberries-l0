@@ -23,7 +23,7 @@ func (s *service) GetOrderById(id string) (*dto.OrderDto, error) {
 	orderCached, isExist := s.orderRepository.GetOrderCacheById(id)
 
 	if isExist {
-		log.Printf("пользователь получил данные из кэша по заказу с order_uid: %s\n", orderCached.OrderUid)
+		log.Printf("the user received data from the cache by order with order_uid %s\n", orderCached.OrderUid)
 
 		return orderCached, nil
 	}
@@ -36,7 +36,7 @@ func (s *service) GetOrderById(id string) (*dto.OrderDto, error) {
 
 	s.orderRepository.SetOrderCache(orderDto.OrderUid, orderDto)
 
-	log.Printf("пользователь получил данные из базы данных по заказу с order_uid: %s\n", orderDto.OrderUid)
+	log.Printf("the user received data from the database for an order with order_uid %s\n", orderDto.OrderUid)
 
 	return orderDto, nil
 }

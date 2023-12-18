@@ -24,22 +24,22 @@ func Run(orderApi api.OrderApiInterface) {
 	hostname := os.Getenv("HOSTNAME")
 
 	if hostname == "" {
-		log.Panicf("укажите имя хоста")
+		log.Panicf("enter the hostname")
 	}
 
 	port := os.Getenv("PORT")
 
 	if port == "" {
-		log.Panicf("укажите порт")
+		log.Panicf("specify the port")
 	}
 
 	address := fmt.Sprintf("%s:%s", hostname, port)
 
-	log.Printf("%s\n", fmt.Sprintf("сервер запускается по адресу %s", address))
+	log.Printf("the server starts at the address %s\n", address)
 
 	err := http.ListenAndServe(address, router)
 
 	if err != nil {
-		log.Panicf("ошибка при запуске сервера: %v\n", err)
+		log.Panicf("error when starting the server %v\n", err)
 	}
 }

@@ -26,16 +26,16 @@ func (s *service) PublishOrder(sc stan.Conn, subject string) {
 	message, err := json.Marshal(order)
 
 	if err != nil {
-		log.Panicf("ошибка %v\n", err)
+		log.Panicf("error %v\n", err)
 	}
 
 	err = sc.Publish(subject, []byte(message))
 
 	if err != nil {
-		log.Panicf("ошибка %v\n", err)
+		log.Panicf("error %v\n", err)
 	}
 
 	if err == nil {
-		log.Printf("опубликовал сообщение с order_uid: %s\n", order.OrderUid)
+		log.Printf("posted a message with order_uid %s\n", order.OrderUid)
 	}
 }

@@ -21,19 +21,19 @@ func connect() stan.Conn {
 	url := os.Getenv("NATS_URL")
 
 	if url == "" {
-		log.Panicf("укажите nats url")
+		log.Panicf("specify nats url")
 	}
 
 	cluster := os.Getenv("NATS_CLUSTER_ID")
 
 	if cluster == "" {
-		log.Panicf("укажите идентификатор кластера")
+		log.Panicf("specify the cluster id")
 	}
 
 	sc, err := stan.Connect(cluster, "subscriber-1", stan.NatsURL(url))
 
 	if err != nil {
-		log.Panicf("ошибка %v\n", err)
+		log.Panicf("error %v\n", err)
 	}
 
 	return sc
@@ -43,12 +43,12 @@ func subscribe(sc stan.Conn, subject string, queue string, handler stan.MsgHandl
 	sub, err := sc.QueueSubscribe(subject, queue, handler)
 
 	if err != nil {
-		log.Panicf("ошибка %v\n", err)
+		log.Panicf("error %v\n", err)
 	}
 
 	defer sub.Unsubscribe()
 
-	log.Printf("подписался на очередь сообщений: %s\n", subject)
+	log.Printf("subscribed to the message queue %s\n", subject)
 
 	channel := make(chan os.Signal, 1)
 	signal.Notify(channel, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)

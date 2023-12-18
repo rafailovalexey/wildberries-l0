@@ -20,7 +20,7 @@ func NewOrderService(orderRepository repository.OrderRepositoryInterface) *servi
 }
 
 func (s *service) HandleOrderMessage(order *dto.OrderDto) {
-	log.Printf("добавил в кэш сообщение с order_uid: %s\n", order.OrderUid)
+	log.Printf("added a message with order_uid to the cache %s\n", order.OrderUid)
 
 	s.orderRepository.SetOrderCache(order.OrderUid, order)
 
@@ -30,7 +30,7 @@ func (s *service) HandleOrderMessage(order *dto.OrderDto) {
 		orderDto, isExist := value.Data.(*dto.OrderDto)
 
 		if !isExist {
-			log.Printf("ошибка при приведение типа")
+			log.Printf("error when casting type")
 
 			s.orderRepository.DeleteOrderCacheById(orderDto.OrderUid)
 
@@ -40,15 +40,15 @@ func (s *service) HandleOrderMessage(order *dto.OrderDto) {
 		err := s.orderRepository.CreateOrder(orderDto)
 
 		if err != nil {
-			log.Printf("ошибка при создание заказа %v\n", err)
+			log.Printf("error when creating an order %v\n", err)
 
 			return
 		}
 
-		log.Printf("обработал сообщение с order_uid: %s\n", order.OrderUid)
+		log.Printf("processed a message with order_uid %s\n", order.OrderUid)
 
 		s.orderRepository.DeleteOrderCacheById(orderDto.OrderUid)
 
-		log.Printf("удалил из кэша сообщение с order_uid: %s\n", order.OrderUid)
+		log.Printf("deleted the message with order_uid from the cache %s\n", order.OrderUid)
 	}
 }
