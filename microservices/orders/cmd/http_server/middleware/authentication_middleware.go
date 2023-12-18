@@ -11,13 +11,13 @@ func AuthenticationMiddleware(next http.Handler) http.Handler {
 		header := os.Getenv("AUTHENTICATION_TOKEN_HEADER")
 
 		if header == "" {
-			log.Fatalf("укажите имя токена аутентификации")
+			log.Panicf("укажите имя токена аутентификации")
 		}
 
 		token := os.Getenv("AUTHENTICATION_TOKEN")
 
 		if token == "" {
-			log.Fatalf("укажите значение токена аутентификации")
+			log.Panicf("укажите значение токена аутентификации")
 		}
 
 		key := request.Header.Get(header)

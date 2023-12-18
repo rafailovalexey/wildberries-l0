@@ -27,13 +27,13 @@ func (s *service) PublishOrder(sc stan.Conn, subject string) {
 	message, err := json.Marshal(order)
 
 	if err != nil {
-		log.Fatalf("ошибка %v\n", err)
+		log.Panicf("ошибка %v\n", err)
 	}
 
 	err = sc.Publish(subject, []byte(message))
 
 	if err != nil {
-		log.Fatalf("ошибка %v\n", err)
+		log.Panicf("ошибка %v\n", err)
 	}
 
 	if err == nil {

@@ -22,19 +22,19 @@ func connect() stan.Conn {
 	url := os.Getenv("NATS_URL")
 
 	if url == "" {
-		log.Fatalf("укажите nats url")
+		log.Panicf("укажите nats url")
 	}
 
 	cluster := os.Getenv("NATS_CLUSTER_ID")
 
 	if cluster == "" {
-		log.Fatalf("укажите идентификатор кластера")
+		log.Panicf("укажите идентификатор кластера")
 	}
 
 	sc, err := stan.Connect(cluster, "subscriber-1", stan.NatsURL(url))
 
 	if err != nil {
-		log.Fatalf("ошибка %v\n", err)
+		log.Panicf("ошибка %v\n", err)
 	}
 
 	return sc
@@ -44,7 +44,7 @@ func subscribe(sc stan.Conn, subject string, queue string, handler stan.MsgHandl
 	sub, err := sc.QueueSubscribe(subject, queue, handler)
 
 	if err != nil {
-		log.Fatalf("ошибка %v\n", err)
+		log.Panicf("ошибка %v\n", err)
 	}
 
 	defer sub.Unsubscribe()

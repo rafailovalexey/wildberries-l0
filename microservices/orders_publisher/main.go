@@ -12,7 +12,7 @@ func main() {
 	pub, err := publisher.NewPublisher(ctx)
 
 	if err != nil {
-		log.Fatalf("произошла ошибка при инициализации %v", err)
+		log.Panicf("произошла ошибка при инициализации %v", err)
 	}
 
 	pub.Run()
